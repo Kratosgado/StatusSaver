@@ -1,19 +1,27 @@
-package com.example.testapp.ui.navigation
+package com.example.testapp.ui.views.components
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.testapp.ui.theme.AppTheme
 
 
 @Composable
-fun BottomNavigationBar(selectedItem: Int, onItemSelect: (Int) -> Unit) {
-  NavigationBar {
+fun BottomNavigationBar(selectedItem: Int, onItemSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+  NavigationBar (modifier,
+//    containerColor = MaterialTheme.colorScheme.primaryContainer
+    ){
     NavigationBarItem(
       icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Images") },
       label = { Text(text = "Images") },
@@ -38,5 +46,13 @@ fun BottomNavigationBar(selectedItem: Int, onItemSelect: (Int) -> Unit) {
       selected = selectedItem == 3,
       onClick = { onItemSelect(3) }
     )
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewNavigationBar(){
+  AppTheme {
+    BottomNavigationBar(selectedItem = 1, onItemSelect = {})
   }
 }

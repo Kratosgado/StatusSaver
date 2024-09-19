@@ -1,7 +1,5 @@
 package com.example.testapp.ui.views
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -21,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -29,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testapp.ui.theme.AppTheme
+import com.example.testapp.utils.rememberImageBitmap
+import com.example.testapp.utils.saveStatus
 import java.io.File
 
 @Composable
@@ -36,8 +35,8 @@ fun ImagesScreen(modifier: Modifier, directory: String) {
   val tag = "StatusScreen"
   Log.d(tag, "Status Screens")
 
-//  val whatsappStatusDir = File(Environment.getExternalStorageDirectory(), directory)
-  val whatsappStatusDir = File(directory) // during preview
+  val whatsappStatusDir = File(Environment.getExternalStorageDirectory(), directory)
+//  val whatsappStatusDir = File(directory) // during preview
   Log.d(tag, "$whatsappStatusDir : ${whatsappStatusDir.exists()}")
 
   // get the list of status files
@@ -63,18 +62,6 @@ fun ImagesScreen(modifier: Modifier, directory: String) {
 
 @Composable
 private fun ImageItem(file: File, saved: Boolean = true) {
-
-  fun saveStatus(file: File) {
-    try {
-      val directory = File(Environment.getExternalStorageDirectory(), "StatusSaver")
-      if (!directory.exists()) directory.mkdirs()
-      val newFile = File(directory, file.name)
-      file.copyTo(newFile)
-      Log.d("StatusItem", "File saved as ${newFile.path}")
-    } catch (e: Exception) {
-      TODO("Not yet implemented: Saving status error")
-    }
-  }
 
   Box(
     modifier = Modifier
@@ -108,7 +95,7 @@ private fun ImageItem(file: File, saved: Boolean = true) {
 
 @Preview(showBackground = true)
 @Composable
-private fun StatusScreenPreview() {
+private fun PreviewImagesScreen() {
   AppTheme {
     ImagesScreen(
       modifier = Modifier
@@ -117,9 +104,4 @@ private fun StatusScreenPreview() {
       directory = "/home/kratosgado/Pictures/Camera/"
     )
   }
-}
-
-@Composable
-private fun rememberImageBitmap(file: File): Bitmap {
-  return remember { BitmapFactory.decodeFile(file.absolutePath) }
 }
