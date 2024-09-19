@@ -29,6 +29,9 @@ class MainActivity : ComponentActivity() {
     checkPermissions()
 
     val savedDir = "/StatusSaver/"
+    if (!Environment.getExternalStorageDirectory().resolve(savedDir).exists()) {
+      Environment.getExternalStorageDirectory().resolve(savedDir).mkdir()
+    }
 
     setContent {
       AppTheme {
