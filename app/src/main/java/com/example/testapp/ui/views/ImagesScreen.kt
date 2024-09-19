@@ -1,4 +1,4 @@
-package com.example.testapp.ui.status
+package com.example.testapp.ui.views
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -6,7 +6,6 @@ import android.os.Environment
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
@@ -34,7 +32,7 @@ import com.example.testapp.ui.theme.AppTheme
 import java.io.File
 
 @Composable
-fun StatusesScreen(modifier: Modifier, directory: String) {
+fun ImagesScreen(modifier: Modifier, directory: String) {
   val tag = "StatusScreen"
   Log.d(tag, "Status Screens")
 
@@ -48,7 +46,7 @@ fun StatusesScreen(modifier: Modifier, directory: String) {
       it.name.endsWith(".jpg") || it.name.endsWith(".jpeg")
     }
       ?: emptyList()
-  val savedFiles = File(Environment.getExternalStorageDirectory(), "StatusSaver")
+//  val savedFiles = File(Environment.getExternalStorageDirectory(), "StatusSaver")
 
   Log.d(tag, "length: ${files.size}")
 
@@ -58,13 +56,13 @@ fun StatusesScreen(modifier: Modifier, directory: String) {
   ) {
     items(files.size) { index ->
       val file = files[index]
-      StatusItem(file = file)
+      ImageItem(file = file)
     }
   }
 }
 
 @Composable
-fun StatusItem(file: File, saved: Boolean = true) {
+private fun ImageItem(file: File, saved: Boolean = true) {
 
   fun saveStatus(file: File) {
     try {
@@ -96,11 +94,13 @@ fun StatusItem(file: File, saved: Boolean = true) {
       onClick = { saveStatus(file) },
       modifier = Modifier
         .align(Alignment.BottomEnd)
-      ) {
+    ) {
       Icon(
         imageVector = if (saved) Icons.Default.CheckCircle else Icons.Default.Check,
         contentDescription = "Save",
-        modifier = Modifier.size(24.dp).background(color =if (saved) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.error)
+        modifier = Modifier
+          .size(24.dp)
+          .background(color = if (saved) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.error)
       )
     }
   }
@@ -108,9 +108,9 @@ fun StatusItem(file: File, saved: Boolean = true) {
 
 @Preview(showBackground = true)
 @Composable
-fun StatusScreenPreview() {
+private fun StatusScreenPreview() {
   AppTheme {
-    StatusesScreen(
+    ImagesScreen(
       modifier = Modifier
         .padding(8.dp)
         .fillMaxSize(),
@@ -120,6 +120,6 @@ fun StatusScreenPreview() {
 }
 
 @Composable
-fun rememberImageBitmap(file: File): Bitmap {
+private fun rememberImageBitmap(file: File): Bitmap {
   return remember { BitmapFactory.decodeFile(file.absolutePath) }
 }

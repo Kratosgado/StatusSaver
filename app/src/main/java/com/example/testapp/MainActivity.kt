@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,17 +21,25 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.testapp.ui.status.StatusesScreen
+import com.example.testapp.ui.navigation.BottomNavigationBar
 import com.example.testapp.ui.theme.AppTheme
+import com.example.testapp.ui.views.ImagesScreen
+import com.example.testapp.ui.views.MainScreen
+import com.example.testapp.ui.views.SavedScreen
+import com.example.testapp.ui.views.SettingsScreen
+import com.example.testapp.ui.views.VideosScreen
 
 class MainActivity : ComponentActivity() {
   companion object {
@@ -47,16 +56,11 @@ class MainActivity : ComponentActivity() {
     setContent {
       AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          StatusesScreen(
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(8.dp), "Android/media/com.whatsapp/WhatsApp/Media/.Statuses/"
-          )
+          MainScreen(directory = "Android/media/com.whatsapp/WhatsApp/Media/.Statuses/")
         }
       }
     }
   }
-
 
   @Deprecated("Deprecated in Java")
   override fun onRequestPermissionsResult(
@@ -105,59 +109,9 @@ class MainActivity : ComponentActivity() {
       arrayOf(
         android.Manifest.permission.READ_EXTERNAL_STORAGE,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        android.Manifest.permission_group.STORAGE
+        android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
       ),
       REQUEST_PERMISSION_CODE,
     )
   }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMainScreen() {
-  AppTheme {
-    Scaffold(
-      modifier = Modifier.fillMaxSize(),
-      topBar = { AppBar() },
-      bottomBar = { BottomBar() },
-      floatingActionButton = { Text(text = "Hello") }
-    ) {
-      StatusesScreen(
-        modifier = Modifier.padding(top = it.calculateTopPadding()),
-        directory = "/home/kratosgado/Pictures/Camera/"
-      )
-    }
-  }
-}
-
-@Composable
-fun AppBar() {
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .height(50.dp)
-      .background(MaterialTheme.colorScheme.primary),
-    horizontalArrangement = Arrangement.SpaceBetween,
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Text(text = "Status Saver")
-    Row {
-      IconButton(onClick = { /*TODO*/ }) {
-        Icon(imageVector = Icons.Default.Send, contentDescription = "Share")
-      }
-      IconButton(onClick = { /*TODO*/ }) {
-        Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
-      }
-    }
-
-  }
-}
-
-@Composable
-fun BottomBar() {
-  NavigationBar() {
-    Text(text = "Hello")
-    Text(text = "what")
-  }
-
 }
