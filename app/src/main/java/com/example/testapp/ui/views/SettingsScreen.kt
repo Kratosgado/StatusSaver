@@ -10,10 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,20 +24,14 @@ import com.example.testapp.utils.AppPreferences
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
-  var downloadPath by remember { mutableStateOf("/storage/emulated/0/StatusSaver") }
-  var fileFormat by remember { mutableStateOf(".jpg") }
-  var autoDownload by remember { mutableStateOf(false) }
-  var notificationsEnabled by remember { mutableStateOf(true) }
-  var vibrateOnNotification by remember { mutableStateOf(false) }
-  var darkMode by remember { mutableStateOf(false) }
+  val downloadPath = "/storage/emulated/0/StatusSaver"
+  val fileFormat = ".jpg"
+  val autoDownload = false
+  val notificationsEnabled = true
+  val vibrateOnNotification = false
+  val darkMode = false
 
   val prefs = AppPreferences.getInstance(LocalContext.current)
-  downloadPath = prefs.getValue("downloadPath", downloadPath)
-  fileFormat = prefs.getValue("fileFormat", fileFormat)
-  autoDownload = prefs.getValue("autoDownload", autoDownload)
-  notificationsEnabled = prefs.getValue("notificationSound", notificationsEnabled)
-  vibrateOnNotification = prefs.getValue("vibrateOnNotification", vibrateOnNotification)
-  darkMode = prefs.getValue("darkMode", darkMode)
 
   LazyColumn(modifier) {
     item {
@@ -54,22 +44,22 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.download_path,
-        value = downloadPath,
-        onClick = { /* Handle download path selection */ }
+        value = prefs.getValue("downloadPath", downloadPath),
+        onClick = { /* todo: Handle download path selection */ }
       )
     }
     item {
       SettingItem(
         title = R.string.file_format,
-        value = fileFormat,
-        onClick = { /* Handle file format selection */ }
+        value = prefs.getValue("fileFormat", fileFormat),
+        onClick = { /* todo:  Handle file format selection */ }
       )
     }
     item {
       SettingItem(
         title = R.string.auto_download,
-        value = autoDownload,
-        onClick = { autoDownload = !autoDownload }
+        value = prefs.getValue("autoDownload", autoDownload),
+        onClick = { prefs.putValue("autoDownload", it) }
       )
     }
     item {
@@ -82,15 +72,15 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.notification,
-        value = notificationsEnabled,
-        onClick = { notificationsEnabled = !notificationsEnabled }
+        value = prefs.getValue("notification", notificationsEnabled),
+        onClick = { prefs.putValue("notification", it) }
       )
     }
     item {
       SettingItem(
         title = R.string.notification_vibrate,
-        value = vibrateOnNotification,
-        onClick = { vibrateOnNotification = !vibrateOnNotification }
+        value = prefs.getValue("vibrateNotification", vibrateOnNotification),
+        onClick = { prefs.putValue("vibrateNotification", it) }
       )
     }
     item {
@@ -103,15 +93,15 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.dark_mode,
-        value = darkMode,
-        onClick = { darkMode = !darkMode }
+        value = prefs.getValue("darkMode", darkMode),
+        onClick = { prefs.putValue("darkMode", it) }
       )
     }
     item {
       SettingItem(
         title = R.string.clear_cache,
         value = "",
-        onClick = { /* Handle cache clearing */ }
+        onClick = { /* todo:  Handle cache clearing */ }
       )
     }
     item {
@@ -125,7 +115,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun <T> SettingItem(@StringRes title: Int, value: T, onClick: () -> Unit) {
+fun <T> SettingItem(@StringRes title: Int, value: T, onClick: (T?) -> Unit) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -138,11 +128,11 @@ fun <T> SettingItem(@StringRes title: Int, value: T, onClick: () -> Unit) {
       modifier = Modifier.weight(1f)
     )
     if (value is String) Text(
-      modifier = Modifier.clickable { onClick() },
+      modifier = Modifier.clickable { onClick(null) },
       text = value,
       style = MaterialTheme.typography.bodyLarge,
       color = Color.Gray
-    ) else Switch(checked = value as Boolean, onCheckedChange = { onClick()})
+    ) else Switch(checked = value as Boolean, onCheckedChange = { onClick(it as T) })
   }
 }
 

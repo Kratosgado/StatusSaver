@@ -2,11 +2,11 @@ package com.example.testapp.ui.views
 
 import android.os.Environment
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,9 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.testapp.ui.theme.AppTheme
 import com.example.testapp.ui.theme.Green
 import com.example.testapp.utils.rememberImageBitmap
 import com.example.testapp.utils.saveStatus
@@ -57,8 +58,6 @@ fun ImagesScreen(modifier: Modifier, directory: String) {
     }
       ?: emptyList()
 
-  Log.d(tag, "length: ${files.size}")
-
   var viewImage by remember {
     mutableStateOf(false to 0)
   }
@@ -72,6 +71,7 @@ fun ImagesScreen(modifier: Modifier, directory: String) {
         val (file, saved) = files[index]
         ImageItem(
           file = file, saved = saved,
+          contentScale = ContentScale.Crop,
           modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
@@ -82,13 +82,20 @@ fun ImagesScreen(modifier: Modifier, directory: String) {
     }
 
     true -> {
-      ViewImage(index = viewImage.second, files = files)
+      ImagePager(modifier = modifier, files = files, startIndex = viewImage.second) {
+        viewImage = false to 0
+      }
     }
   }
 }
 
 @Composable
-private fun ImageItem(modifier: Modifier = Modifier, file: File, saved: Boolean = true) {
+private fun ImageItem(
+  modifier: Modifier = Modifier,
+  contentScale: ContentScale,
+  file: File,
+  saved: Boolean = true
+) {
 
   Box(
     modifier = modifier
@@ -96,7 +103,7 @@ private fun ImageItem(modifier: Modifier = Modifier, file: File, saved: Boolean 
     Image(
       bitmap = rememberImageBitmap(file = file).asImageBitmap(),
       contentDescription = null,
-      contentScale = ContentScale.Inside,
+      contentScale = contentScale,
       modifier = Modifier
         .fillMaxSize()
     )
@@ -129,15 +136,47 @@ private fun ImageItem(modifier: Modifier = Modifier, file: File, saved: Boolean 
 //  }
 //}
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ViewImage(index: Int, files: List<Pair<File, Boolean>>) {
-//   TODO : Implement Swiping functionality
-  val (file, saved) = files[index]
-
-  ImageItem(
-    modifier = Modifier
-      .fillMaxSize().background(Color.Black), file, saved
+fun ImagePager(
+  modifier: Modifier = Modifier,
+  files: List<Pair<File, Boolean>>,
+  startIndex: Int,
+  OnDismiss: () -> Unit
+) {
+  val pagerState = rememberPagerState(
+    initialPage = startIndex,
+    initialPageOffsetFraction = 0f,
+    pageCount = { files.size }
   )
+
+  Box(
+    modifier = modifier
+      .background(Color.Black)
+  ) {
+    HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+      val (file, saved) = files[page]
+      ImageItem(
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Fit,
+        file = file,
+        saved = saved
+      )
+    }
+    IconButton(
+      onClick = { OnDismiss() },
+      modifier = Modifier
+        .align(Alignment.TopEnd)
+        .padding(8.dp)
+    ) {
+      Icon(
+        imageVector = Icons.Default.ArrowBack,
+        contentDescription = "Close",
+        tint = Color.White,
+        modifier = Modifier.size(30.dp)
+      )
+    }
+  }
 }
 
 //@Preview(showBackground = true)

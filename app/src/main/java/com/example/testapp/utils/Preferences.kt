@@ -1,6 +1,7 @@
 package com.example.testapp.utils
 
 import android.content.Context
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 
 class AppPreferences(context: Context) {
   private val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -26,11 +27,16 @@ class AppPreferences(context: Context) {
     editor.apply()
   }
 
+  fun registerListener(listener: OnSharedPreferenceChangeListener) {
+    sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+  }
+
   companion object {
-    private var instance: AppPreferences? = null;
+    private var instance: AppPreferences? = null
     fun getInstance(context: Context): AppPreferences {
       if (instance == null) instance = AppPreferences(context)
       return instance!!
     }
   }
+
 }
