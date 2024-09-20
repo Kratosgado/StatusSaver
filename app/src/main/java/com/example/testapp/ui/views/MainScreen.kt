@@ -18,7 +18,7 @@ import com.example.testapp.ui.views.components.BottomNavigationBar
 
 @Composable
 fun MainScreen(directory: String, savedDir: String = "", modifier: Modifier = Modifier) {
-  var selectedItem by remember { mutableIntStateOf(3) }
+  var selectedItem by remember { mutableIntStateOf(0) }
 
   AppTheme {
     Scaffold(
@@ -31,7 +31,7 @@ fun MainScreen(directory: String, savedDir: String = "", modifier: Modifier = Mo
       when (selectedItem) {
         1 -> VideosScreen(directory = directory, modifier = Modifier.padding(it))
         2 -> SavedScreen(directory = savedDir, modifier = Modifier.padding(it))
-        3 -> SettingsScreen( modifier = Modifier.padding(it))
+        3 -> SettingsScreen(modifier = Modifier.padding(it))
         else -> ImagesScreen(
           modifier = Modifier.padding(it),
           directory = directory

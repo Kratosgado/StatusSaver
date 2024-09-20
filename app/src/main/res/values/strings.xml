@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Status Saver</string>
+    <string name="download_settings">Download Settings</string>
+    <string name="download_path">Download Path</string>
+    <string name="file_format">File Format</string>
+    <string name="auto_download">Auto Download Media</string>
+    <string name="notification">Notifications</string>
+    <string name="notification_vibrate">Vibrate On Notification</string>
+    <string name="other_settings">Other Settings</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="about">About </string>
 </resources>

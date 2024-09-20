@@ -1,12 +1,13 @@
 package com.example.testapp.ui.views
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,139 +17,107 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.testapp.R
 import com.example.testapp.ui.theme.AppTheme
+import com.example.testapp.utils.AppPreferences
 
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
-  var downloadPath by remember { mutableStateOf("/storage/emulated/0/Download") }
-  var fileFormat by remember { mutableStateOf("jpg") }
-  var downloadQuality by remember {
-    mutableStateOf(
-      "High"
-    )
-  }
-  var autoDownload by remember {
-    mutableStateOf(
-      false
-    )
-  }
-  var notificationsEnabled by remember {
-    mutableStateOf(
-      true
-    )
-  }
-  var notificationSound by remember {
-    mutableStateOf(
-      "Default"
-    )
-  }
-  var vibrateOnNotification by remember {
-    mutableStateOf(
-      false
-    )
-  }
+  var downloadPath by remember { mutableStateOf("/storage/emulated/0/StatusSaver") }
+  var fileFormat by remember { mutableStateOf(".jpg") }
+  var autoDownload by remember { mutableStateOf(false) }
+  var notificationsEnabled by remember { mutableStateOf(true) }
+  var vibrateOnNotification by remember { mutableStateOf(false) }
   var darkMode by remember { mutableStateOf(false) }
-  var language by remember { mutableStateOf("English") }
 
-  LazyColumn(modifier = Modifier.fillMaxSize()) {
+  val prefs = AppPreferences.getInstance(LocalContext.current)
+  downloadPath = prefs.getValue("downloadPath", downloadPath)
+  fileFormat = prefs.getValue("fileFormat", fileFormat)
+  autoDownload = prefs.getValue("autoDownload", autoDownload)
+  notificationsEnabled = prefs.getValue("notificationSound", notificationsEnabled)
+  vibrateOnNotification = prefs.getValue("vibrateOnNotification", vibrateOnNotification)
+  darkMode = prefs.getValue("darkMode", darkMode)
+
+  LazyColumn(modifier) {
     item {
       Text(
-        text = "Download Settings",
-        style = MaterialTheme.typography.titleSmall,
+        text = stringResource(id = R.string.download_settings),
+        style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(16.dp)
       )
     }
     item {
       SettingItem(
-        title = "Download Path",
+        title = R.string.download_path,
         value = downloadPath,
         onClick = { /* Handle download path selection */ }
       )
     }
     item {
       SettingItem(
-        title = "File Format",
+        title = R.string.file_format,
         value = fileFormat,
         onClick = { /* Handle file format selection */ }
       )
     }
     item {
       SettingItem(
-        title = "Download Quality",
-        value = downloadQuality,
-        onClick = { /* Handle download quality selection */ }
-      )
-    }
-    item {
-      SettingItem(
-        title = "Auto-download Media",
-        value = if (autoDownload) "On" else "Off",
+        title = R.string.auto_download,
+        value = autoDownload,
         onClick = { autoDownload = !autoDownload }
       )
     }
     item {
       Text(
-        text = "Notifications",
+        text = stringResource(id = R.string.notification),
         style = MaterialTheme.typography.titleSmall,
         modifier = Modifier.padding(16.dp)
       )
     }
     item {
       SettingItem(
-        title = "Notifications",
-        value = if (notificationsEnabled) "On" else "Off",
+        title = R.string.notification,
+        value = notificationsEnabled,
         onClick = { notificationsEnabled = !notificationsEnabled }
       )
     }
     item {
       SettingItem(
-        title = "Notification Sound",
-        value = notificationSound,
-        onClick = { /* Handle notification sound selection */ }
-      )
-    }
-    item {
-      SettingItem(
-        title = "Vibrate on Notification",
-        value = if (vibrateOnNotification) "On" else "Off",
+        title = R.string.notification_vibrate,
+        value = vibrateOnNotification,
         onClick = { vibrateOnNotification = !vibrateOnNotification }
       )
     }
     item {
       Text(
-        text = "Other Settings",
+        text = stringResource(R.string.other_settings),
         style = MaterialTheme.typography.titleSmall,
         modifier = Modifier.padding(16.dp)
       )
     }
     item {
       SettingItem(
-        title = "Dark Mode",
-        value = if (darkMode) "On" else "Off",
+        title = R.string.dark_mode,
+        value = darkMode,
         onClick = { darkMode = !darkMode }
       )
     }
     item {
       SettingItem(
-        title = "Language",
-        value = language,
-        onClick = { /* Handle language selection */ }
-      )
-    }
-    item {
-      SettingItem(
-        title = "Clear Cache",
+        title = R.string.clear_cache,
         value = "",
         onClick = { /* Handle cache clearing */ }
       )
     }
     item {
       SettingItem(
-        title = "About",
-        value = "",
+        title = R.string.about,
+        value = "v1.0",
         onClick = { /* Handle about screen navigation */ }
       )
     }
@@ -156,24 +125,24 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SettingItem(title: String, value: String, onClick: () -> Unit) {
+fun <T> SettingItem(@StringRes title: Int, value: T, onClick: () -> Unit) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
-      .clickable { onClick() }
       .padding(16.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
     Text(
-      text = title,
+      text = stringResource(id = title),
       style = MaterialTheme.typography.bodyMedium,
       modifier = Modifier.weight(1f)
     )
-    Text(
+    if (value is String) Text(
+      modifier = Modifier.clickable { onClick() },
       text = value,
       style = MaterialTheme.typography.bodyLarge,
       color = Color.Gray
-    )
+    ) else Switch(checked = value as Boolean, onCheckedChange = { onClick()})
   }
 }
 

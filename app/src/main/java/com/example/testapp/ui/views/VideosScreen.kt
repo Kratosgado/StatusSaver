@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,13 +40,17 @@ fun VideosScreen(modifier: Modifier, directory: String) {
 //  val whatsappStatusDir = File(directory) // during preview
   Log.d(tag, "$whatsappStatusDir : ${whatsappStatusDir.exists()}")
 
+  // get saved files
+  val savedFiles = File(Environment.getExternalStorageDirectory(), "/StatusSaver")
+    .listFiles()?.map { it.name }
   // get the list of status files
   val files =
     whatsappStatusDir.listFiles()?.filter {
-      it.name.endsWith(".jpg")
+      it.name.endsWith(".mp4")
+    }?.map {
+      it to (savedFiles?.contains(it.name) ?: false)
     }
       ?: emptyList()
-//  val savedFiles = File(Environment.getExternalStorageDirectory(), "StatusSaver")
 
   Log.d(tag, "length: ${files.size}")
 
@@ -54,14 +59,14 @@ fun VideosScreen(modifier: Modifier, directory: String) {
     modifier = modifier,
   ) {
     items(files.size) { index ->
-      val file = files[index]
-      ImageItem(file = file)
+      val entry = files[index]
+      VideoItem(entry.first, entry.second)
     }
   }
 }
 
 @Composable
-private fun ImageItem(file: File, saved: Boolean = true) {
+private fun VideoItem(file: File, saved: Boolean = true) {
 
   Box(
     modifier = Modifier
@@ -76,6 +81,13 @@ private fun ImageItem(file: File, saved: Boolean = true) {
       modifier = Modifier
         .fillMaxWidth()
         .height(150.dp)
+    )
+    Icon(
+      imageVector = Icons.Outlined.PlayArrow,
+      contentDescription = "Video Status",
+      modifier = Modifier
+        .size(80.dp)
+        .align(Alignment.Center)
     )
     IconButton(
       onClick = { saveStatus(file) },

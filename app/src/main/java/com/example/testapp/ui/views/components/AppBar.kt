@@ -39,13 +39,12 @@ fun AppBar() {
         Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
       }
     }
-
   }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewAppBar(){
+fun PreviewAppBar() {
   AppTheme {
     AppBar()
   }

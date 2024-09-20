@@ -14,6 +14,7 @@ class AppPreferences(context: Context) {
     }
   }
 
+
   fun <T> putValue(key: String, value: T) {
     val editor = sharedPreferences.edit()
     when (value) {
