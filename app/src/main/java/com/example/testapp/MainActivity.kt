@@ -27,18 +27,19 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     Log.d(TAG, "Starting Application: checking permissions")
     checkPermissions()
-
+    val storage = Environment.getExternalStorageDirectory()
     val savedDir = "/StatusSaver/"
-    if (!Environment.getExternalStorageDirectory().resolve(savedDir).exists()) {
-      Environment.getExternalStorageDirectory().resolve(savedDir).mkdir()
+    if (!storage.resolve(savedDir).exists()) {
+      storage.resolve(savedDir).mkdir()
     }
+
 
     setContent {
       AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           MainScreen(
-            savedDir = savedDir,
-            directory = "Android/media/com.whatsapp/WhatsApp/Media/.Statuses/"
+            savedDir = storage.absolutePath + savedDir,
+            directory = storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/"
           )
         }
       }

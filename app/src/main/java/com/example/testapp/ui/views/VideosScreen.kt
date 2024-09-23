@@ -1,11 +1,9 @@
 package com.example.testapp.ui.views
 
-import android.os.Environment
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,35 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.testapp.ui.theme.AppTheme
 import com.example.testapp.utils.rememberImageBitmap
 import com.example.testapp.utils.saveStatus
 import java.io.File
 
 @Composable
-fun VideosScreen(modifier: Modifier, directory: String) {
-  val tag = "StatusScreen"
-  Log.d(tag, "Status Screens")
-
-  val whatsappStatusDir = File(Environment.getExternalStorageDirectory(), directory)
-//  val whatsappStatusDir = File(directory) // during preview
-  Log.d(tag, "$whatsappStatusDir : ${whatsappStatusDir.exists()}")
-
-  // get saved files
-  val savedFiles = File(Environment.getExternalStorageDirectory(), "/StatusSaver")
-    .listFiles()?.map { it.name }
-  // get the list of status files
-  val files =
-    whatsappStatusDir.listFiles()?.filter {
-      it.name.endsWith(".mp4")
-    }?.map {
-      it to (savedFiles?.contains(it.name) ?: false)
-    }
-      ?: emptyList()
-
-  Log.d(tag, "length: ${files.size}")
+fun VideosScreen(modifier: Modifier, files: List<Pair<File, Boolean>>) {
+  val tag = "VideoScreen"
+  Log.d(tag, "Video Screens")
 
   LazyVerticalGrid(
     columns = GridCells.Fixed(3),
@@ -105,15 +83,15 @@ private fun VideoItem(file: File, saved: Boolean = true) {
   }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun PreviewVideosScreen() {
-  AppTheme {
-    VideosScreen(
-      modifier = Modifier
-        .padding(8.dp)
-        .fillMaxSize(),
-      directory = "/home/kratosgado/Pictures/Camera/"
-    )
-  }
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun PreviewVideosScreen() {
+//  AppTheme {
+//    VideosScreen(
+//      modifier = Modifier
+//        .padding(8.dp)
+//        .fillMaxSize(),
+//      directory = "/home/kratosgado/Pictures/Camera/"
+//    )
+//  }
+//}

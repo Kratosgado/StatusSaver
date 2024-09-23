@@ -13,12 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.testapp.ui.theme.AppTheme
+import com.example.testapp.ui.views.Screens
 
 
 @Composable
 fun BottomNavigationBar(
-  selectedItem: Int,
-  onItemSelect: (Int) -> Unit,
+  selectedScreen: Screens,
+  onItemSelect: (Screens) -> Unit,
   modifier: Modifier = Modifier
 ) {
   NavigationBar(
@@ -28,26 +29,26 @@ fun BottomNavigationBar(
     NavigationBarItem(
       icon = { Icon(imageVector = Icons.Default.AccountBox, contentDescription = "Images") },
       label = { Text(text = "Images") },
-      selected = selectedItem == 0,
-      onClick = { onItemSelect(0) }
+      selected = selectedScreen == Screens.Images,
+      onClick = { onItemSelect(Screens.Images) }
     )
     NavigationBarItem(
       icon = { Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Videos") },
       label = { Text(text = "Videos") },
-      selected = selectedItem == 1,
-      onClick = { onItemSelect(1) }
+      selected = selectedScreen == Screens.Videos,
+      onClick = { onItemSelect(Screens.Videos) }
     )
     NavigationBarItem(
       icon = { Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "Saved") },
       label = { Text(text = "Saved") },
-      selected = selectedItem == 2,
-      onClick = { onItemSelect(2) }
+      selected = selectedScreen == Screens.Saved,
+      onClick = { onItemSelect(Screens.Saved) }
     )
     NavigationBarItem(
       icon = { Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings") },
       label = { Text(text = "Settings") },
-      selected = selectedItem == 3,
-      onClick = { onItemSelect(3) }
+      selected = selectedScreen == Screens.Settings,
+      onClick = { onItemSelect(Screens.Settings) }
     )
   }
 }
@@ -56,6 +57,6 @@ fun BottomNavigationBar(
 @Composable
 fun PreviewNavigationBar() {
   AppTheme {
-    BottomNavigationBar(selectedItem = 1, onItemSelect = {})
+    BottomNavigationBar(selectedScreen = Screens.Images, onItemSelect = {})
   }
 }

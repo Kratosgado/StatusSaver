@@ -1,8 +1,6 @@
 package com.example.testapp.ui.views
 
-import android.os.Environment
 import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,15 +15,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,59 +31,35 @@ import com.example.testapp.utils.saveStatus
 import java.io.File
 
 @Composable
-fun ImagesScreen(modifier: Modifier, directory: String) {
-  val tag = "StatusScreen"
-  Log.d(tag, "Status Screens")
+fun ImagesScreen(
+  modifier: Modifier,
+  files: List<Pair<File, Boolean>>,
+  onStatusClick: (Int) -> Unit
+) {
+  val tag = "ImagesScreen"
+  Log.d(tag, "Images Screens")
 
-  val whatsappStatusDir = File(Environment.getExternalStorageDirectory(), directory)
-//  val whatsappStatusDir = File(directory) // during preview
-  Log.d(tag, "$whatsappStatusDir : ${whatsappStatusDir.exists()}")
-
-  // get saved files
-  val savedFiles = File(Environment.getExternalStorageDirectory(), "/StatusSaver")
-    .listFiles()?.map { it.name }
-  // get the list of status files
-  val files =
-    whatsappStatusDir.listFiles()?.filter {
-      it.name.endsWith(".jpg") || it.name.endsWith(".jpeg")
-    }?.map {
-      it to (savedFiles?.contains(it.name) ?: false)
-    }
-      ?: emptyList()
-
-  var viewImage by remember {
-    mutableStateOf(false to 0)
-  }
-
-  when (viewImage.first) {
-    false -> LazyVerticalGrid(
-      columns = GridCells.Fixed(3),
-      modifier = modifier,
-    ) {
-      items(files.size) { index ->
-        val (file, saved) = files[index]
-        ImageItem(
-          file = file, saved = saved,
-          contentScale = ContentScale.Crop,
-          modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clickable { viewImage = true to index }
-            .padding(2.dp),
-        )
-      }
-    }
-
-    true -> {
-      ImagePager(modifier = modifier, files = files, startIndex = viewImage.second) {
-        viewImage = false to 0
-      }
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(3),
+    modifier = modifier,
+  ) {
+    items(files.size) { index ->
+      val (file, saved) = files[index]
+      ImageItem(
+        file = file, saved = saved,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(150.dp)
+          .clickable { onStatusClick(index) }
+          .padding(2.dp),
+      )
     }
   }
 }
 
 @Composable
-private fun ImageItem(
+fun ImageItem(
   modifier: Modifier = Modifier,
   contentScale: ContentScale,
   file: File,
@@ -136,13 +105,11 @@ private fun ImageItem(
 //  }
 //}
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImagePager(
+fun StatusPager(
   modifier: Modifier = Modifier,
   files: List<Pair<File, Boolean>>,
   startIndex: Int,
-  OnDismiss: () -> Unit
 ) {
   val pagerState = rememberPagerState(
     initialPage = startIndex,
@@ -161,19 +128,6 @@ fun ImagePager(
         contentScale = ContentScale.Fit,
         file = file,
         saved = saved
-      )
-    }
-    IconButton(
-      onClick = { OnDismiss() },
-      modifier = Modifier
-        .align(Alignment.TopEnd)
-        .padding(8.dp)
-    ) {
-      Icon(
-        imageVector = Icons.Default.ArrowBack,
-        contentDescription = "Close",
-        tint = Color.White,
-        modifier = Modifier.size(30.dp)
       )
     }
   }
