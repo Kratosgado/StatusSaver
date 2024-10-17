@@ -39,7 +39,6 @@ fun MainScreen(
   appViewModel: AppViewModel = viewModel(),
   directory: String,
   savedDir: String = "",
-  navController: NavHostController = rememberNavController()
 ) {
   val appState by appViewModel.uiState.collectAsState()
 //  val currentScreen =
@@ -69,9 +68,9 @@ fun MainScreen(
       .safeDrawingPadding(),
     topBar = {
       AppBar(
-        canNavigateBack = navController.previousBackStackEntry != null,
+        canNavigateBack = appState.canNavigateBack,
         currentScreen = appState.selectedScreen,
-        navigateUp = { navController.navigateUp() },
+        navigateUp = appViewModel::navigateBack,
       )
     },
     bottomBar = {
@@ -88,7 +87,7 @@ fun MainScreen(
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
           files = images,
-          onStatusClick = { idx -> navController.navigate("${Screens.StatusView.name}/$idx") }
+          onStatusClick = appViewModel::viewStatus
         )
       }
       // Video Screen
@@ -103,7 +102,7 @@ fun MainScreen(
         SavedScreen(
           modifier = Modifier.fillMaxWidth(),
           files = savedFiles.listFiles()?.toList() ?: emptyList(),
-          onStatusClick = { idx -> navController.navigate("${Screens.StatusView.name}/$idx") }
+          onStatusClick = appViewModel::viewStatus
         )
       }
       // Settings Screen
@@ -118,10 +117,7 @@ fun MainScreen(
         arguments = listOf(navArgument("index") { type = NavType.IntType })
       ) { backStackEntry ->
         val index = backStackEntry.arguments?.getInt("index")
-        val prev = Screens.valueOf(
-          navController.previousBackStackEntry?.destination?.route ?: Screens.Images.name
-        )
-        val files = when (prev) {
+        val files = when (appViewModel.previousScreen()) {
           Screens.Images -> images
           Screens.Videos -> videos
           Screens.Saved -> savedFiles.listFiles()?.map { file -> file to true }?.toList()

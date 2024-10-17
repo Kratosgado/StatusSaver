@@ -22,4 +22,21 @@ class AppViewModel(val  navController: NavHostController
     navController.navigate(screen.name)
   }
 
+  fun navigateBack(){
+    navController.navigateUp()
+    _uiState.update {
+      it.copy(selectedScreen = Screens.valueOf(navController.currentDestination?.route ?: Screens.Images.name))
+    }
+  }
+
+  fun viewStatus(index: Int){
+    navController.navigate("${Screens.StatusView.name}/$index")
+    _uiState.update {
+      it.copy(selectedScreen = Screens.StatusView, canNavigateBack = true)
+    }
+  }
+
+  fun previousScreen(): Screens {
+    return Screens.valueOf(navController.previousBackStackEntry?.destination?.route ?: Screens.Images.name)
+  }
 }
