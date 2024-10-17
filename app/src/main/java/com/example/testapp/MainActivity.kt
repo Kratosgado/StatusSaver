@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.example.testapp.ui.theme.AppTheme
-import com.example.testapp.ui.views.MainScreen
+import com.example.testapp.ui.MainScreen
+import com.example.testapp.ui.viewmodel.AppViewModel
 
 class MainActivity : ComponentActivity() {
   companion object {
@@ -38,6 +40,7 @@ class MainActivity : ComponentActivity() {
       AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           MainScreen(
+            appViewModel = AppViewModel(navController = rememberNavController()),
             savedDir = storage.absolutePath + savedDir,
             directory = storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/"
           )

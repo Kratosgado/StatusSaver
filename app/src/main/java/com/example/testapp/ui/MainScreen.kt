@@ -1,4 +1,4 @@
-package com.example.testapp.ui.views
+package com.example.testapp.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,24 +22,28 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.testapp.ui.theme.AppTheme
-import com.example.testapp.ui.views.components.AppBar
-import com.example.testapp.ui.views.components.BottomNavigationBar
+import com.example.testapp.ui.components.AppBar
+import com.example.testapp.ui.components.BottomNavigationBar
+import com.example.testapp.ui.viewmodel.AppViewModel
+import com.example.testapp.ui.views.ImagesScreen
+import com.example.testapp.ui.views.SavedScreen
+import com.example.testapp.ui.views.SettingsScreen
+import com.example.testapp.ui.views.StatusPager
+import com.example.testapp.ui.views.VideosScreen
 import java.io.File
 
-enum class Screens {
-  Images, StatusView, Videos, Saved, Settings
-}
+
 
 @Composable
 fun MainScreen(
+  appViewModel: AppViewModel = viewModel(),
   directory: String,
   savedDir: String = "",
   navController: NavHostController = rememberNavController()
 ) {
-  var selectedItem by remember { mutableStateOf(Screens.Images) }
-  val backStackEntry by navController.currentBackStackEntryAsState()
-  val currentScreen =
-    Screens.valueOf(backStackEntry?.destination?.route?.split('/')?.get(0) ?: Screens.Images.name)
+  val appState by appViewModel.uiState.collectAsState()
+//  val currentScreen =
+//    Screens.valueOf(backStackEntry?.destination?.route?.split('/')?.get(0) ?: Screens.Images.name)
 
   val whatsappStatusDir = File(directory)
   val savedFiles = File(savedDir)
@@ -64,20 +70,17 @@ fun MainScreen(
     topBar = {
       AppBar(
         canNavigateBack = navController.previousBackStackEntry != null,
-        currentScreen = currentScreen,
+        currentScreen = appState.selectedScreen,
         navigateUp = { navController.navigateUp() },
       )
     },
     bottomBar = {
-      BottomNavigationBar(selectedItem, onItemSelect = {
-        selectedItem = it
-        navController.navigate(it.name)
-      })
+      BottomNavigationBar(appState.selectedScreen, onItemSelect = appViewModel::switchScreen)
     },
   ) {
     NavHost(
-      navController = navController,
-      startDestination = Screens.Images.name,
+      navController = appViewModel.navController,
+      startDestination = appState.selectedScreen.name,
       modifier = Modifier.padding(it)
     ) {
       // Image Screen
@@ -135,8 +138,8 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen() {
-  val dir = "/home/kratosgado/Pictures/Camera/"
+  val dir = "E:\\MY FILES\\Camera"
   AppTheme {
-    MainScreen(dir, dir)
+    MainScreen(appViewModel = AppViewModel(navController = rememberNavController()), savedDir = dir, directory = dir)
   }
 }

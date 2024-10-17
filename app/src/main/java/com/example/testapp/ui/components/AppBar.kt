@@ -1,8 +1,5 @@
-package com.example.testapp.ui.views.components
+package com.example.testapp.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
@@ -17,9 +14,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.testapp.ui.Screens
 import com.example.testapp.ui.theme.AppTheme
-import com.example.testapp.ui.views.Screens
 
 
 @OptIn(ExperimentalMaterial3Api::class)
