@@ -37,30 +37,8 @@ import java.io.File
 @Composable
 fun MainScreen(
   appViewModel: AppViewModel = viewModel(),
-  directory: String,
-  savedDir: String = "",
 ) {
   val appState by appViewModel.uiState.collectAsState()
-//  val currentScreen =
-//    Screens.valueOf(backStackEntry?.destination?.route?.split('/')?.get(0) ?: Screens.Images.name)
-
-  val whatsappStatusDir = File(directory)
-  val savedFiles = File(savedDir)
-  val images: MutableList<Pair<File, Boolean>> = mutableListOf()
-  val videos: MutableList<Pair<File, Boolean>> = mutableListOf()
-  val savedFilesNames = savedFiles
-    .listFiles()?.map { it.name }
-  whatsappStatusDir.listFiles()?.forEach {
-    when {
-      it.name.endsWith(".jpg") || it.name.endsWith(".jpeg") -> {
-        images.add(it to (savedFilesNames?.contains(it.name) ?: false))
-      }
-
-      it.name.endsWith(".mp4") -> {
-        videos.add(it to (savedFilesNames?.contains(it.name) ?: false))
-      }
-    }
-  }
 
   Scaffold(
     modifier = Modifier
@@ -86,7 +64,7 @@ fun MainScreen(
       composable(route = Screens.Images.name) {
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = images,
+          files = appViewModel.images,
           onStatusClick = appViewModel::viewStatus
         )
       }
@@ -94,14 +72,14 @@ fun MainScreen(
       composable(route = Screens.Videos.name) {
         VideosScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = videos
+          files = appViewModel.images
         )
       }
       // Saved Screen
       composable(route = Screens.Saved.name) {
         SavedScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = savedFiles.listFiles()?.toList() ?: emptyList(),
+          files = appViewModel.saved,
           onStatusClick = appViewModel::viewStatus
         )
       }
@@ -118,12 +96,9 @@ fun MainScreen(
       ) { backStackEntry ->
         val index = backStackEntry.arguments?.getInt("index")
         val files = when (appViewModel.previousScreen()) {
-          Screens.Images -> images
-          Screens.Videos -> videos
-          Screens.Saved -> savedFiles.listFiles()?.map { file -> file to true }?.toList()
-            ?: emptyList()
-
-          else -> emptyList()
+          Screens.Videos -> appViewModel.videos
+          Screens.Saved -> appViewModel.saved
+          else -> appViewModel.images
         }
         StatusPager(startIndex = index ?: 0, files = files)
       }
@@ -136,6 +111,6 @@ fun MainScreen(
 fun PreviewMainScreen() {
   val dir = "E:\\MY FILES\\Camera"
   AppTheme {
-    MainScreen(appViewModel = AppViewModel(navController = rememberNavController()), savedDir = dir, directory = dir)
+    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = dir, saveDir = dir))
   }
 }

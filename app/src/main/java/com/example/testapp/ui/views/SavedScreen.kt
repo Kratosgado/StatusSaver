@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import java.io.File
 
 @Composable
-fun SavedScreen(modifier: Modifier, files: List<File>, onStatusClick: (Int) -> Unit) {
+fun SavedScreen(modifier: Modifier, files: List<Pair<File, Boolean>>, onStatusClick: (Int) -> Unit) {
   val tag = "SavedScreen"
   Log.d(tag, "Saved Screens")
 
@@ -23,9 +23,9 @@ fun SavedScreen(modifier: Modifier, files: List<File>, onStatusClick: (Int) -> U
     modifier = modifier,
   ) {
     items(files.size) { index ->
-      val file = files[index]
+      val (file, saved) = files[index]
       ImageItem(
-        file = file, saved = true,
+        file = file, saved = saved,
         contentScale = ContentScale.Crop,
         modifier = Modifier
           .fillMaxWidth()

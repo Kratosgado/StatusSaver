@@ -40,9 +40,11 @@ class MainActivity : ComponentActivity() {
       AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           MainScreen(
-            appViewModel = AppViewModel(navController = rememberNavController()),
-            savedDir = storage.absolutePath + savedDir,
-            directory = storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/"
+            appViewModel = AppViewModel(
+              saveDir = storage.absolutePath + savedDir,
+              statusDir = storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/",
+              navController = rememberNavController()
+            )
           )
         }
       }
@@ -66,25 +68,9 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun checkPermissions() {
-    if (!hasPermissions()) {
+    if (!hasWritePermissions()) {
       requestPermissions()
     }
-  }
-
-  private fun hasPermissions(): Boolean {
-    return hasReadPermissions() && hasWritePermissions() && hasAccessToHiddenFiles()
-  }
-
-  private fun hasAccessToHiddenFiles(): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      checkSelfPermission(android.Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    } else {
-      TODO("VERSION.SDK_INT < R")
-    }
-  }
-
-  private fun hasReadPermissions(): Boolean {
-    return checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
   }
 
   private fun hasWritePermissions(): Boolean {
@@ -94,9 +80,7 @@ class MainActivity : ComponentActivity() {
   private fun requestPermissions() {
     requestPermissions(
       arrayOf(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
       ),
       REQUEST_PERMISSION_CODE,
     )
