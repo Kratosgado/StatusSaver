@@ -8,30 +8,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.testapp.ui.theme.AppTheme
 import com.example.testapp.ui.components.AppBar
 import com.example.testapp.ui.components.BottomNavigationBar
+import com.example.testapp.ui.theme.AppTheme
 import com.example.testapp.ui.viewmodel.AppViewModel
 import com.example.testapp.ui.views.ImagesScreen
 import com.example.testapp.ui.views.SavedScreen
 import com.example.testapp.ui.views.SettingsScreen
 import com.example.testapp.ui.views.StatusPager
 import com.example.testapp.ui.views.VideosScreen
-import java.io.File
-
 
 
 @Composable
@@ -106,11 +99,21 @@ fun MainScreen(
   }
 }
 
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewMainScreen() {
+//  val dir = "E:\\MY FILES\\Camera\\Camera Roll"
+//  AppTheme {
+//    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = dir, saveDir = dir))
+//  }
+//}
+
 @Preview(showBackground = true)
 @Composable
-fun PreviewMainScreen() {
-  val dir = "E:\\MY FILES\\Camera"
-  AppTheme {
+fun DarkPreviewMainScreen() {
+  val dir = "E:\\MY FILES\\Camera\\Camera Roll"
+  AppTheme(darkTheme = true) {
     MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = dir, saveDir = dir))
   }
 }
+
