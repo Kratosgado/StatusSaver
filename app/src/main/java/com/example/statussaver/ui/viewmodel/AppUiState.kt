@@ -1,6 +1,6 @@
-package com.example.testapp.ui.viewmodel
+package com.example.statussaver.ui.viewmodel
 
-import com.example.testapp.ui.Screens
+import com.example.statussaver.ui.Screens
 
 
 data class AppUiState(

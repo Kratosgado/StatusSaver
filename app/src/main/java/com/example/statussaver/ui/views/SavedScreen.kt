@@ -1,4 +1,4 @@
-package com.example.testapp.ui.views
+package com.example.statussaver.ui.views
 
 import android.util.Log
 import androidx.compose.foundation.clickable

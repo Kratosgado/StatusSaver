@@ -1,4 +1,4 @@
-package com.example.testapp.ui.components
+package com.example.statussaver.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -12,8 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.testapp.ui.Screens
-import com.example.testapp.ui.theme.AppTheme
+import com.example.statussaver.ui.Screens
+import com.example.statussaver.ui.theme.AppTheme
 
 
 @Composable

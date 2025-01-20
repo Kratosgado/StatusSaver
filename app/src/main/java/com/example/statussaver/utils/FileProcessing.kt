@@ -1,4 +1,4 @@
-package com.example.testapp.utils
+package com.example.statussaver.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

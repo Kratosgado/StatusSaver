@@ -1,4 +1,4 @@
-package com.example.testapp.ui.views
+package com.example.statussaver.ui.views
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -17,9 +17,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.testapp.R
-import com.example.testapp.ui.theme.AppTheme
-import com.example.testapp.utils.AppPreferences
+import com.example.statussaver.R
+import com.example.statussaver.ui.theme.AppTheme
+import com.example.statussaver.utils.AppPreferences
 
 
 @Composable

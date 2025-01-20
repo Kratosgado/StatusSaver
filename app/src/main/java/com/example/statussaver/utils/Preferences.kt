@@ -1,4 +1,4 @@
-package com.example.testapp.utils
+package com.example.statussaver.utils
 
 import android.content.Context
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener

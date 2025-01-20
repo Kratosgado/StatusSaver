@@ -1,4 +1,4 @@
-package com.example.testapp.ui.views
+package com.example.statussaver.ui.views
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.testapp.utils.rememberImageBitmap
-import com.example.testapp.utils.saveStatus
+import com.example.statussaver.utils.rememberImageBitmap
+import com.example.statussaver.utils.saveStatus
 import java.io.File
 
 @Composable

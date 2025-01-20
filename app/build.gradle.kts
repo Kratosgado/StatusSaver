@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-  namespace = "com.example.testapp"
+  namespace = "com.example.statussaver"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "com.example.testapp"
+    applicationId = "com.example.statussaver"
     minSdk = 24
     targetSdk = 35
     versionCode = 1

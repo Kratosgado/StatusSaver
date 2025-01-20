@@ -1,4 +1,4 @@
-package com.example.testapp.ui.theme
+package com.example.statussaver.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF00553B)

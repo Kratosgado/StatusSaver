@@ -1,4 +1,4 @@
-package com.example.testapp.ui
+package com.example.statussaver.ui
 
 enum class Screens {
   Images, StatusView, Videos, Saved, Settings

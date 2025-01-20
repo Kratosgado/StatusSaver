@@ -1,8 +1,8 @@
-package com.example.testapp.ui.viewmodel
+package com.example.statussaver.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.example.testapp.ui.Screens
+import com.example.statussaver.ui.Screens
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

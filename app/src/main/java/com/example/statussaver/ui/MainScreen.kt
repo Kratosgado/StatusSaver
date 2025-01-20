@@ -1,4 +1,4 @@
-package com.example.testapp.ui
+package com.example.statussaver.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,15 +16,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.testapp.ui.components.AppBar
-import com.example.testapp.ui.components.BottomNavigationBar
-import com.example.testapp.ui.theme.AppTheme
-import com.example.testapp.ui.viewmodel.AppViewModel
-import com.example.testapp.ui.views.ImagesScreen
-import com.example.testapp.ui.views.SavedScreen
-import com.example.testapp.ui.views.SettingsScreen
-import com.example.testapp.ui.views.StatusPager
-import com.example.testapp.ui.views.VideosScreen
+import com.example.statussaver.ui.components.AppBar
+import com.example.statussaver.ui.components.BottomNavigationBar
+import com.example.statussaver.ui.theme.AppTheme
+import com.example.statussaver.ui.viewmodel.AppViewModel
+import com.example.statussaver.ui.views.ImagesScreen
+import com.example.statussaver.ui.views.SavedScreen
+import com.example.statussaver.ui.views.SettingsScreen
+import com.example.statussaver.ui.views.StatusPager
+import com.example.statussaver.ui.views.VideosScreen
 
 
 @Composable
