@@ -87,7 +87,7 @@ fun MainScreen(
       }
       // Status View
       composable(
-        "${Screens.StatusView.name}/{index}",
+        route = "${Screens.StatusView.name}/{index}",
         arguments = listOf(navArgument("index") { type = NavType.IntType })
       ) { backStackEntry ->
         val index = backStackEntry.arguments?.getInt("index")
@@ -116,7 +116,14 @@ fun MainScreen(
 fun DarkPreviewMainScreen() {
   val dir = "/home/kratosgado/Pictures/Screenshots"
   AppTheme(darkTheme = true) {
-    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = File(dir).toUri(), context = LocalContext.current, saveDir = dir))
+    MainScreen(
+      appViewModel = AppViewModel(
+        navController = rememberNavController(),
+        statusDir = File(dir).toUri(),
+        context = LocalContext.current,
+        saveDir = dir
+      )
+    )
   }
 }
 

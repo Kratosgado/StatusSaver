@@ -2,7 +2,6 @@ package com.example.statussaver.ui.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
@@ -18,10 +17,8 @@ class AppViewModel(
   context: Context,
   statusDir: Uri,
   saveDir: String
-): ViewModel() {
-  companion object {
-    const val tag = "AppViewModel";
-  }
+) : ViewModel() {
+
   // ui state
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
@@ -36,7 +33,7 @@ class AppViewModel(
 
     val savedFilesNames = savedFiles
       .listFiles()?.map {
-        saved.add(it.toUri() to true )
+        saved.add(it.toUri() to true)
         it.name
       }
     whatsappStatusDir?.listFiles()?.forEach {
@@ -59,27 +56,29 @@ class AppViewModel(
       it.copy(selectedScreen = screen)
     }
   }
-  private fun debug(v: String){
-    Log.d(tag, v)
-  }
 
-  fun navigateBack(){
+  fun navigateBack() {
     navController.popBackStack()
     _uiState.update {
-      it.copy(selectedScreen = Screens.valueOf(navController.currentDestination?.route ?: Screens.Images.name))
+      it.copy(
+        selectedScreen = Screens.valueOf(
+          navController.currentDestination?.route ?: Screens.Images.name
+        )
+      )
     }
   }
 
-  fun viewStatus(index: Int){
-    _uiState.update {
-      it.copy(selectedScreen = Screens.StatusView, canNavigateBack = true)
-    }
-    debug("Navigating to $index")
+  fun viewStatus(index: Int) {
     navController.navigate("${Screens.StatusView.name}/$index")
 //    navController.navigate("${Screens.StatusView.name}")
+    _uiState.update {
+      it.copy(selectedScreen = Screens.Images, canNavigateBack = true)
+    }
   }
 
   fun previousScreen(): Screens {
-    return Screens.valueOf(navController.previousBackStackEntry?.destination?.route ?: Screens.Images.name)
+    return Screens.valueOf(
+      navController.previousBackStackEntry?.destination?.route ?: Screens.Images.name
+    )
   }
 }

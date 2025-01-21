@@ -1,7 +1,6 @@
 package com.example.statussaver.ui.views
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,13 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.statussaver.utils.rememberImageBitmap
 import com.example.statussaver.utils.rememberImageUri
 import com.example.statussaver.utils.saveStatus
-import java.io.File
 
 @Composable
 fun ImagesScreen(
@@ -38,8 +34,6 @@ fun ImagesScreen(
   files: List<Pair<Uri, Boolean>>,
   onStatusClick: (Int) -> Unit
 ) {
-  val tag = "ImagesScreen"
-  Log.d(tag, "Images Screens")
 
   LazyVerticalGrid(
     columns = GridCells.Fixed(3),
