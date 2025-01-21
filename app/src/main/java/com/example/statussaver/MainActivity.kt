@@ -43,8 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import androidx.navigation.compose.rememberNavController
+import com.example.statussaver.ui.MainScreen
 import com.example.statussaver.ui.theme.AppTheme
+import com.example.statussaver.ui.viewmodel.AppViewModel
 import com.example.statussaver.utils.rememberImageBitmap
+import com.example.statussaver.utils.rememberImageUri
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -56,23 +60,11 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var sharedPreferences: SharedPreferences
 
-//  private val openDocumentTreeLauncher = registerForActivityResult(
-//    ActivityResultContracts.OpenDocumentTree()
-//  ){uri: Uri? ->
-//    if(uri != null){
-//      val docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
-//      Log.d(TAG, "Selected directory: ${docUri}")
-//      listFilesInDirectory(docUri)
-//    }
-//  }
-
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
     Log.d(TAG, "Starting Application: checking permissions")
-//    openDocumentTreeLauncher.launch(null)
 
     val storage = Environment.getExternalStorageDirectory()
     val savedDir = "/StatusSaver/"
@@ -84,14 +76,19 @@ class MainActivity : ComponentActivity() {
     setContent {
       AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          CheckPermission(modifier = Modifier.fillMaxSize(), initialUri = File( storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/").toUri())
-//          MainScreen(
-//            appViewModel = AppViewModel(
-//              saveDir = storage.absolutePath + savedDir,
-//              statusDir = storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/",
-//              navController = rememberNavController()
-//            )
-//          )
+          CheckPermission(
+            modifier = Modifier.fillMaxSize(),
+            initialUri = File( storage.absolutePath + "/Android/media/com.whatsapp/WhatsApp/Media/.Statuses/").toUri(),
+           onPermissionGranted = {   MainScreen(
+            appViewModel = AppViewModel(
+              saveDir = storage.absolutePath + savedDir,
+              context = LocalContext.current,
+              statusDir = it,
+              navController = rememberNavController()
+            )
+          )
+           }
+          )
         }
       }
     }
@@ -114,7 +111,7 @@ class MainActivity : ComponentActivity() {
   }
 
   @Composable
-  fun CheckPermission(modifier: Modifier, onPermissionGranted: @Composable () -> Unit = {}, initialUri: Uri){
+  fun CheckPermission(modifier: Modifier, onPermissionGranted: @Composable (uri: Uri) -> Unit = {}, initialUri: Uri){
     val context = LocalContext.current
     var isDirectoryPicked by remember { mutableStateOf(false) }
     var pickedFiles by remember { mutableStateOf<List<Uri>?>(null) }
@@ -146,9 +143,7 @@ class MainActivity : ComponentActivity() {
           // save URI to shared preferences
           sharedPreferences.edit().putString(SAVED_URI, uri.toString()).apply()
 
-          Log.d(TAG, "picked uri: ${uri.path}")
           val pickedDir = DocumentFile.fromTreeUri(context, uri)
-          Log.d(TAG, "decoded: $pickedDir")
           pickedFiles = pickedDir?.listFiles()?.mapNotNull {
             Log.d(TAG, "File uri: ${it.uri}")
             if(it.isFile and it.name!!.endsWith(".jpg")) it.uri else null
@@ -156,43 +151,14 @@ class MainActivity : ComponentActivity() {
           isDirectoryPicked = true
         }
   })
-
+//    dirPickerLauncher.launch(initialUri)
+    if (isDirectoryPicked) onPermissionGranted(savedUri?: throw  IllegalStateException("Directory not picked"))
+else
     Column(modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
       Button(onClick = { dirPickerLauncher.launch(initialUri) }) {
         Text(text = "Open Directory Picker")
-      }
-      Spacer(modifier = Modifier.height(30.dp))
-
-      if (isDirectoryPicked) {
-        Text("Directory picked successfully! Files:")
-        pickedFiles?.let { uris ->
-          LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.fillMaxSize().padding(16.dp)
-          ) {
-            items(uris.size) { index ->
-              val imageUri = uris[index]
-              val parcelFileDescriptor = context.contentResolver.openFileDescriptor(imageUri, "r")!!
-              val fileDescriptor = parcelFileDescriptor.fileDescriptor
-              val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-              parcelFileDescriptor.close()
-//              Text(imageUri.path!!)
-              Log.d(TAG, "decoding file: $imageUri")
-              Image(
-               bitmap  = image.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier
-                  .size(100.dp)
-                  .padding(4.dp)
-              )
-            }
-          }
-        }
-//        onPermissionGranted()
-      } else {
-        Text(text = "Waiting for you to choose a directory")
       }
     }
   }

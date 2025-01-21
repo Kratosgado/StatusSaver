@@ -1,5 +1,6 @@
 package com.example.statussaver.ui.views
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,13 +28,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.statussaver.utils.rememberImageBitmap
+import com.example.statussaver.utils.rememberImageUri
 import com.example.statussaver.utils.saveStatus
 import java.io.File
 
 @Composable
 fun ImagesScreen(
   modifier: Modifier,
-  files: List<Pair<File, Boolean>>,
+  files: List<Pair<Uri, Boolean>>,
   onStatusClick: (Int) -> Unit
 ) {
   val tag = "ImagesScreen"
@@ -62,7 +64,7 @@ fun ImagesScreen(
 fun ImageItem(
   modifier: Modifier = Modifier,
   contentScale: ContentScale,
-  file: File,
+  file: Uri,
   saved: Boolean = true
 ) {
 
@@ -70,7 +72,7 @@ fun ImageItem(
     modifier = modifier
   ) {
     Image(
-      bitmap = rememberImageBitmap(file = file).asImageBitmap(),
+      bitmap = rememberImageUri(file),
       contentDescription = null,
       contentScale = contentScale,
       modifier = Modifier
@@ -108,7 +110,7 @@ fun ImageItem(
 @Composable
 fun StatusPager(
   modifier: Modifier = Modifier,
-  files: List<Pair<File, Boolean>>,
+  files: List<Pair<Uri, Boolean>>,
   startIndex: Int,
 ) {
   val pagerState = rememberPagerState(

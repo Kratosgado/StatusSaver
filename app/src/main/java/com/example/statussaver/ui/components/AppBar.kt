@@ -55,8 +55,8 @@ fun AppBar(
 fun PreviewAppBar() {
   AppTheme {
     AppBar(
-      canNavigateBack = false,
-      currentScreen = Screens.Settings,
+      canNavigateBack = true,
+      currentScreen = Screens.Images,
       navigateUp = {},
       modifier = Modifier
     )

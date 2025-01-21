@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,6 +27,7 @@ import com.example.statussaver.ui.views.SavedScreen
 import com.example.statussaver.ui.views.SettingsScreen
 import com.example.statussaver.ui.views.StatusPager
 import com.example.statussaver.ui.views.VideosScreen
+import java.io.File
 
 
 @Composable
@@ -111,9 +114,9 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun DarkPreviewMainScreen() {
-  val dir = "E:\\MY FILES\\Camera\\Camera Roll"
+  val dir = "/home/kratosgado/Pictures/Screenshots"
   AppTheme(darkTheme = true) {
-    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = dir, saveDir = dir))
+    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = File(dir).toUri(), context = LocalContext.current, saveDir = dir))
   }
 }
 

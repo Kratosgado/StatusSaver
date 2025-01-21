@@ -1,5 +1,6 @@
 package com.example.statussaver.ui.views
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,11 +25,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.statussaver.utils.rememberImageBitmap
+import com.example.statussaver.utils.rememberImageUri
 import com.example.statussaver.utils.saveStatus
 import java.io.File
 
 @Composable
-fun VideosScreen(modifier: Modifier, files: List<Pair<File, Boolean>>) {
+fun VideosScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>) {
   val tag = "VideoScreen"
   Log.d(tag, "Video Screens")
 
@@ -44,7 +46,7 @@ fun VideosScreen(modifier: Modifier, files: List<Pair<File, Boolean>>) {
 }
 
 @Composable
-private fun VideoItem(file: File, saved: Boolean = true) {
+private fun VideoItem(file: Uri, saved: Boolean = true) {
 
   Box(
     modifier = Modifier
@@ -53,7 +55,7 @@ private fun VideoItem(file: File, saved: Boolean = true) {
       .padding(2.dp),
   ) {
     Image(
-      bitmap = rememberImageBitmap(file = file).asImageBitmap(),
+      bitmap = rememberImageUri(file),
       contentDescription = null,
       contentScale = ContentScale.Crop,
       modifier = Modifier

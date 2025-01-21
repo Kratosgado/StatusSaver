@@ -1,5 +1,6 @@
 package com.example.statussaver.ui.views
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import java.io.File
 
 @Composable
-fun SavedScreen(modifier: Modifier, files: List<Pair<File, Boolean>>, onStatusClick: (Int) -> Unit) {
+fun SavedScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>, onStatusClick: (Int) -> Unit) {
   val tag = "SavedScreen"
   Log.d(tag, "Saved Screens")
 
