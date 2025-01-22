@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-  namespace = "com.example.statussaver"
+  namespace = "com.kratosgado.statussaver"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "com.example.statussaver"
+    applicationId = "com.kratosgado.statussaver"
     minSdk = 24
     targetSdk = 35
     versionCode = 1
