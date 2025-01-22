@@ -28,13 +28,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kratosgado.statussaver.utils.rememberImageUri
-import com.kratosgado.statussaver.utils.saveStatus
 
 @Composable
 fun ImagesScreen(
   modifier: Modifier,
   files: List<Pair<Uri, Boolean>>,
-  onStatusClick: (Int) -> Unit
+  onStatusClick: (Int) -> Unit,
+  onClickSave: (uri: Uri) -> Unit
 ) {
 
   LazyVerticalGrid(
@@ -46,6 +46,7 @@ fun ImagesScreen(
       ImageItem(
         file = file, saved = saved,
         contentScale = ContentScale.Crop,
+        onClickSave = onClickSave,
         modifier = Modifier
           .fillMaxWidth()
           .height(150.dp)
@@ -61,7 +62,8 @@ fun ImageItem(
   modifier: Modifier = Modifier,
   contentScale: ContentScale,
   file: Uri,
-  saved: Boolean = true
+  saved: Boolean = false,
+  onClickSave: (uri: Uri) -> Unit
 ) {
   val context = LocalContext.current
 
@@ -76,7 +78,7 @@ fun ImageItem(
         .fillMaxSize()
     )
     IconButton(
-      onClick = { saveStatus(file, context = context) },
+      onClick = { onClickSave(file) },
       modifier = Modifier
         .align(Alignment.BottomEnd)
     ) {
@@ -109,6 +111,7 @@ fun StatusPager(
   modifier: Modifier = Modifier,
   files: List<Pair<Uri, Boolean>>,
   startIndex: Int,
+  onClickSave: (uri: Uri) -> Unit
 ) {
   val pagerState = rememberPagerState(
     initialPage = startIndex,
@@ -126,7 +129,8 @@ fun StatusPager(
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Fit,
         file = file,
-        saved = saved
+        saved = saved,
+        onClickSave = onClickSave
       )
     }
   }

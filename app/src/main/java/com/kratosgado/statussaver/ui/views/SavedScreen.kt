@@ -32,6 +32,7 @@ fun SavedScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>, onStatusCli
           .height(150.dp)
           .clickable { onStatusClick(index) }
           .padding(2.dp),
+        onClickSave = {}
       )
     }
   }

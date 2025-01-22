@@ -61,7 +61,8 @@ fun MainScreen(
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
           files = appViewModel.images,
-          onStatusClick = appViewModel::viewStatus
+          onStatusClick = appViewModel::viewStatus,
+          onClickSave = appViewModel::saveStatus,
         )
       }
       // Video Screen
@@ -96,7 +97,7 @@ fun MainScreen(
           Screens.Saved -> appViewModel.saved
           else -> appViewModel.images
         }
-        StatusPager(startIndex = index ?: 0, files = files)
+        StatusPager(startIndex = index ?: 0, files = files, onClickSave = appViewModel::saveStatus)
       }
     }
   }

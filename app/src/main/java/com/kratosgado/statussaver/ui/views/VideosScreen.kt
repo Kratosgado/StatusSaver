@@ -25,7 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kratosgado.statussaver.utils.rememberImageUri
-import com.kratosgado.statussaver.utils.saveStatus
 
 @Composable
 fun VideosScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>) {
@@ -68,7 +67,7 @@ private fun VideoItem(file: Uri, saved: Boolean = true) {
         .align(Alignment.Center)
     )
     IconButton(
-      onClick = { saveStatus(file, context) },
+      onClick = { },
       modifier = Modifier
         .align(Alignment.BottomEnd)
     ) {
