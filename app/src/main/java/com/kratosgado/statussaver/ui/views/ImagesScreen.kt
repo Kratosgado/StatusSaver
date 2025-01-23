@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kratosgado.statussaver.utils.rememberImageUri
 
@@ -62,10 +60,9 @@ fun ImageItem(
   modifier: Modifier = Modifier,
   contentScale: ContentScale,
   file: Uri,
-  saved: Boolean = false,
+  saved: Boolean,
   onClickSave: (uri: Uri) -> Unit
 ) {
-  val context = LocalContext.current
 
   Box(
     modifier = modifier
@@ -83,7 +80,7 @@ fun ImageItem(
         .align(Alignment.BottomEnd)
     ) {
       Icon(
-        imageVector = if (saved) Icons.Default.Check else Icons.Default.CheckCircle,
+        imageVector = if (saved) Icons.Default.CheckCircle else Icons.Default.CheckCircle,
         contentDescription = "Save",
         tint = if (saved) Green else Color.Red,
         modifier = Modifier

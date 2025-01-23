@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +61,7 @@ fun MainScreen(
       composable(route = Screens.Images.name) {
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = appViewModel.images,
+          files = remember { appViewModel.images },
           onStatusClick = appViewModel::viewStatus,
           onClickSave = appViewModel::saveStatus,
         )
@@ -69,14 +70,14 @@ fun MainScreen(
       composable(route = Screens.Videos.name) {
         VideosScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = appViewModel.images
+          files = remember { appViewModel.images },
         )
       }
       // Saved Screen
       composable(route = Screens.Saved.name) {
         SavedScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = appViewModel.saved,
+          files = remember { appViewModel.saved },
           onStatusClick = appViewModel::viewStatus
         )
       }

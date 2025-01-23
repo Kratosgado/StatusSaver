@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateListOf
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
@@ -28,9 +29,9 @@ class AppViewModel(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  val images: MutableList<Pair<Uri, Boolean>> = mutableListOf()
-  val videos: MutableList<Pair<Uri, Boolean>> = mutableListOf()
-  val saved: MutableList<Pair<Uri, Boolean>> = mutableListOf()
+  val images: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
+  val videos: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
+  val saved: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
 
   init {
     val whatsappStatusDir = DocumentFile.fromTreeUri(context, statusDir)
@@ -67,8 +68,9 @@ class AppViewModel(
     _uiState.update {
       it.copy(
         selectedScreen = Screens.valueOf(
-          navController.currentDestination?.route ?: Screens.Images.name
-        )
+          navController.currentDestination?.route ?: Screens.Images.name,
+        ),
+        canNavigateBack = false
       )
     }
   }
