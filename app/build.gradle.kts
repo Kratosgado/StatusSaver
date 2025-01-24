@@ -51,6 +51,7 @@ dependencies {
   implementation(libs.androidx.navigation.compose)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
+  implementation("androidx.work:work-runtime-ktx:2.7.1") // worker manager
   implementation(libs.androidx.activity.compose)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.lifecycle.viewmodel.compose)

@@ -1,5 +1,7 @@
 package com.kratosgado.statussaver.ui.views
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -10,6 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,19 +25,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kratosgado.statussaver.R
 import com.kratosgado.statussaver.ui.theme.AppTheme
-import com.kratosgado.statussaver.utils.AppPreferences
+import com.kratosgado.statussaver.utils.SettingsManager
 
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {
-  val downloadPath = "/storage/emulated/0/StatusSaver"
-  val fileFormat = ".jpg"
-  val autoDownload = false
-  val notificationsEnabled = true
-  val vibrateOnNotification = false
-  val darkMode = false
+  val prefs = SettingsManager.getInstance(LocalContext.current)
+  var downloadPath by remember { mutableStateOf(prefs.getValue(SettingsManager.SAVE_LOCATION, "")) }
+  var autoDownload by remember { mutableStateOf(prefs.getValue(SettingsManager.AUTO_SAVE, false)) }
+  var notificationsEnabled by remember {
+    mutableStateOf(
+      prefs.getValue(
+        SettingsManager.NOTIFICATIONS,
+        false
+      )
+    )
+  }
+  var vibrateOnNotification by remember {
+    mutableStateOf(
+      prefs.getValue(
+        SettingsManager.VIBRATION,
+        false
+      )
+    )
+  }
+  var darkMode by remember { mutableStateOf(prefs.getValue(SettingsManager.THEME, false)) }
 
-  val prefs = AppPreferences.getInstance(LocalContext.current)
+  val launcher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.OpenDocumentTree()
+  ) { uri ->
+    uri?.let {
+      prefs.saveLocation(it)
+    }
+  }
 
   LazyColumn(modifier) {
     item {
@@ -44,22 +70,19 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.download_path,
-        value = prefs.getValue("downloadPath", downloadPath),
-        onClick = { /* todo: Handle download path selection */ }
+        value = downloadPath,
+        onClick = { launcher.launch(null) }
       )
     }
-    item {
-      SettingItem(
-        title = R.string.file_format,
-        value = prefs.getValue("fileFormat", fileFormat),
-        onClick = { /* todo:  Handle file format selection */ }
-      )
-    }
+
     item {
       SettingItem(
         title = R.string.auto_download,
-        value = prefs.getValue("autoDownload", autoDownload),
-        onClick = { prefs.putValue("autoDownload", it) }
+        value = autoDownload,
+        onClick = {
+          prefs.setAutoSave(it!!)
+          autoDownload = it
+        }
       )
     }
     item {
@@ -72,15 +95,21 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.notification,
-        value = prefs.getValue("notification", notificationsEnabled),
-        onClick = { prefs.putValue("notification", it) }
+        value = notificationsEnabled,
+        onClick = {
+          prefs.putValue("notification", it)
+          notificationsEnabled = it!!
+        }
       )
     }
     item {
       SettingItem(
         title = R.string.notification_vibrate,
-        value = prefs.getValue("vibrateNotification", vibrateOnNotification),
-        onClick = { prefs.putValue("vibrateNotification", it) }
+        value = vibrateOnNotification,
+        onClick = {
+          prefs.putValue("vibrateNotification", it)
+          vibrateOnNotification = it!!
+        }
       )
     }
     item {
@@ -93,15 +122,18 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     item {
       SettingItem(
         title = R.string.dark_mode,
-        value = prefs.getValue("darkMode", darkMode),
-        onClick = { prefs.putValue("darkMode", it) }
+        value = darkMode,
+        onClick = {
+          prefs.putValue("darkMode", it)
+          darkMode = it!!
+        }
       )
     }
     item {
       SettingItem(
         title = R.string.clear_cache,
-        value = "",
-        onClick = { /* todo:  Handle cache clearing */ }
+        value = "clear",
+        onClick = {prefs.clearCache()}
       )
     }
     item {
@@ -140,7 +172,7 @@ fun <T> SettingItem(@StringRes title: Int, value: T, onClick: (T?) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSettingsScreen() {
-  AppTheme {
+  AppTheme(darkTheme = true) {
     SettingsScreen()
   }
 }
