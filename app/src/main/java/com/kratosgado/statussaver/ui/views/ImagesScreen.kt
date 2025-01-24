@@ -25,12 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.kratosgado.statussaver.utils.Status
 import com.kratosgado.statussaver.utils.rememberImageUri
 
 @Composable
 fun ImagesScreen(
   modifier: Modifier,
-  files: List<Pair<Uri, Boolean>>,
+  files: List<Status>,
   onStatusClick: (Int) -> Unit,
   onClickSave: (uri: Uri) -> Unit
 ) {
@@ -40,7 +41,7 @@ fun ImagesScreen(
     modifier = modifier,
   ) {
     items(files.size) { index ->
-      val (file, saved) = files[index]
+      val stat = files[index]
       ImageItem(
         file = file, saved = saved,
         contentScale = ContentScale.Crop,

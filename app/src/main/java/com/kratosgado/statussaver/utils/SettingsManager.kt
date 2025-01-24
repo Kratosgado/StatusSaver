@@ -61,6 +61,7 @@ class SettingsManager(private val context: Context) {
     const val THEME = "app_theme"
     const val NOTIFICATIONS = "notifications"
     const val VIBRATION = "vibration"
+    const val STATUS_DIR = "status_dir"
     private var instance: SettingsManager? = null
     fun getInstance(context: Context): SettingsManager {
       if (instance == null) instance = SettingsManager(context)

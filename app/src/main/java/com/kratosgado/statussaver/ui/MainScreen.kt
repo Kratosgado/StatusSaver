@@ -12,13 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kratosgado.statussaver.logic.StatusRepo
 import com.kratosgado.statussaver.ui.components.AppBar
 import com.kratosgado.statussaver.ui.components.BottomNavigationBar
 import com.kratosgado.statussaver.ui.theme.AppTheme
@@ -28,7 +28,6 @@ import com.kratosgado.statussaver.ui.views.SavedScreen
 import com.kratosgado.statussaver.ui.views.SettingsScreen
 import com.kratosgado.statussaver.ui.views.StatusPager
 import com.kratosgado.statussaver.ui.views.VideosScreen
-import java.io.File
 
 
 @Composable
@@ -61,7 +60,7 @@ fun MainScreen(
       composable(route = Screens.Images.name) {
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = remember { appViewModel.images },
+          files = remember { appState.statuses },
           onStatusClick = appViewModel::viewStatus,
           onClickSave = appViewModel::saveStatus,
         )
@@ -71,6 +70,7 @@ fun MainScreen(
         VideosScreen(
           modifier = Modifier.fillMaxWidth(),
           files = remember { appViewModel.images },
+          onClickSave = appViewModel::saveStatus,
         )
       }
       // Saved Screen
@@ -120,10 +120,8 @@ fun DarkPreviewMainScreen() {
   AppTheme(darkTheme = true) {
     MainScreen(
       appViewModel = AppViewModel(
+        statusRepo = StatusRepo(LocalContext.current),
         navController = rememberNavController(),
-        statusDir = File(dir).toUri(),
-        context = LocalContext.current,
-        saveDir = File(dir)
       )
     )
   }

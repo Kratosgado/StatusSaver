@@ -51,7 +51,14 @@ dependencies {
   implementation(libs.androidx.navigation.compose)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
-  implementation("androidx.work:work-runtime-ktx:2.7.1") // worker manager
+  implementation(libs.androidx.work.runtime.ktx) // worker manager
+  implementation(libs.coil.compose) // for images
+  // ExoPlayer for video playback
+  implementation(libs.androidx.media3.exoplayer)
+  implementation(libs.androidx.media3.ui)
+
+// Coil for video thumbnails (optional but recommended)
+  implementation(libs.coil.video)
   implementation(libs.androidx.activity.compose)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.lifecycle.viewmodel.compose)

@@ -1,58 +1,59 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
-import android.content.Context
 import android.net.Uri
-import android.os.Environment
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
-import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.kratosgado.statussaver.logic.StatusRepo
 import com.kratosgado.statussaver.ui.Screens
-import com.kratosgado.statussaver.utils.isExternalStorageWritable
+import com.kratosgado.statussaver.utils.Status
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.io.File
-import java.io.FileOutputStream
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 class AppViewModel(
+  private val statusRepo: StatusRepo,
+//  savedStateHandle: SavedStateHandle,
   val navController: NavHostController,
-  val context: Context,
-  statusDir: Uri,
-  saveDir: File,
 ) : ViewModel() {
 
   // ui state
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
+  private val scope = viewModelScope
 
   val images: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
   val videos: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
   val saved: MutableList<Pair<Uri, Boolean>> = mutableStateListOf()
 
   init {
-    val whatsappStatusDir = DocumentFile.fromTreeUri(context, statusDir)
+    loadStatus()
+  }
 
-    val savedFilesNames = saveDir
-      .listFiles()?.map {
-        saved.add(it.toUri() to true)
-        Log.d("ImageView", it.name)
-        it.name
-      }
-    whatsappStatusDir?.listFiles()?.forEach {
-      when {
-        it.name!!.endsWith(".jpg") || it.name!!.endsWith(".jpeg") -> {
-          images.add(it.uri to (savedFilesNames?.contains(it.name!!) ?: false))
+  private fun loadStatus() {
+    scope.launch(Dispatchers.IO) {
+      try {
+        val status = statusRepo.loadStatuses()
+//        val savedStats = statusRepo.loadStatuses()
+        _uiState.update {
+          it.copy(
+            statuses = status,
+//            savedStatuses = savedStats
+          )
         }
+      } catch (e: IOException) {
+        _uiState.update { it.copy(error = "Failed to load statuses") }
+      }
 
-        it.name!!.endsWith(".mp4") -> {
-          videos.add(it.uri to (savedFilesNames?.contains(it.name!!) ?: false))
-        }
-      }
     }
+  }
+
+  private fun updateStatuses(statuses: List<Status>) {
+    _uiState.update { it.copy(statuses = statuses) }
   }
 
   // handle events
@@ -90,39 +91,44 @@ class AppViewModel(
   }
 
   fun saveStatus(uri: Uri) {
-    try {
-      Log.d("Saving", "Saving")
-      val resolver = context.contentResolver
-      val inputStream = resolver.openInputStream(uri)
-
-      if (inputStream != null) {
-        if (isExternalStorageWritable()) Log.d("Saving", "Writable")
-        val directory = File(
-          Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-          "StatusSaver"
-        )
-        if (!directory.exists()) {
-          Log.d("Saving", "creating directory")
-          directory.mkdirs()
-        }
-        val file = DocumentFile.fromSingleUri(context, uri)
-        val newFile = File(directory, file?.name ?: "default.jpg")
-        if (newFile.exists()) throw Exception("File has been already saved")
-        FileOutputStream(newFile).use {
-          inputStream.copyTo(it)
-          inputStream.close()
-        }
-        val index = images.indexOfFirst { it.first == uri }
-        images[index] = uri to true
-        Log.d("StatusItem", "File saved as ${newFile.path}")
-        Toast.makeText(context, "Saved: ${newFile.path}", Toast.LENGTH_SHORT).show()
-        return
+    scope.launch(Dispatchers.IO) {
+      try {
+//        statusRepo.saveStatus(uri)
+        loadStatus()
+      } catch (e: IOException) {
+        _uiState.update { it.copy(error = "Failed to save status") }
       }
-      throw Exception("Cannot open file")
-    } catch (e: Exception) {
-      Log.e("SaveStatus", e.message, e.fillInStackTrace())
-      Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-//    TODO("Not yet implemented: Saving status error")
+//      try {
+//        Log.d("Saving", "Saving")
+//        val resolver = context.contentResolver
+//        val inputStream = resolver.openInputStream(uri)
+//
+//        if (inputStream != null) {
+//          if (isExternalStorageWritable()) Log.d("Saving", "Writable")
+//          val directory = File(
+//            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+//            "StatusSaver"
+//          )
+//          if (!directory.exists()) {
+//            Log.d("Saving", "creating directory")
+//            directory.mkdirs()
+//          }
+//          val file = DocumentFile.fromSingleUri(context, uri)
+//          val newFile = File(directory, file?.name ?: "default.jpg")
+//          if (newFile.exists()) throw Exception("File has been already saved")
+//          FileOutputStream(newFile).use {
+//            inputStream.copyTo(it)
+//            inputStream.close()
+//          }
+//          val index = images.indexOfFirst { it.first == uri }
+//          images[index] = uri to true
+//          Log.d("StatusItem", "File saved as ${newFile.path}")
+//          Toast.makeText(context, "Saved: ${newFile.path}", Toast.LENGTH_SHORT).show()
+//        } else throw Exception("Cannot open file")
+//      } catch (e: Exception) {
+//        Log.e("SaveStatus", e.message, e.fillInStackTrace())
+//        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+//      }
     }
   }
 }

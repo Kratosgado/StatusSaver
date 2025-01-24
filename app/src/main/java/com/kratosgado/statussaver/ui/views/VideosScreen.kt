@@ -3,7 +3,6 @@ package com.kratosgado.statussaver.ui.views
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,22 +11,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.decode.VideoFrameDecoder
 import com.kratosgado.statussaver.utils.rememberImageUri
 
 @Composable
-fun VideosScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>) {
+fun VideosScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>, onClickSave: (Uri) -> Unit) {
   val tag = "VideoScreen"
   Log.d(tag, "Video Screens")
 
@@ -37,20 +36,20 @@ fun VideosScreen(modifier: Modifier, files: List<Pair<Uri, Boolean>>) {
   ) {
     items(files.size) { index ->
       val entry = files[index]
-      VideoItem(entry.first, entry.second)
+      VideoItem(entry.first, entry.second, onClickSave)
     }
   }
 }
 
 @Composable
-private fun VideoItem(file: Uri, saved: Boolean = true) {
-  val context = LocalContext.current
+private fun VideoItem(file: Uri, saved: Boolean = true, onClickSave: (Uri) -> Unit) {
   Box(
     modifier = Modifier
       .fillMaxWidth()
       .height(150.dp)
       .padding(2.dp),
   ) {
+    val painter = VideoFrameDecoder
     Image(
       bitmap = rememberImageUri(file),
       contentDescription = null,
@@ -67,16 +66,16 @@ private fun VideoItem(file: Uri, saved: Boolean = true) {
         .align(Alignment.Center)
     )
     IconButton(
-      onClick = { },
+      onClick = { onClickSave(file) },
       modifier = Modifier
         .align(Alignment.BottomEnd)
     ) {
       Icon(
-        imageVector = if (saved) Icons.Default.CheckCircle else Icons.Default.Check,
+        imageVector = if (saved) Icons.Default.CheckCircle else Icons.Default.CheckCircle,
         contentDescription = "Save",
+        tint = if (saved) Green else Color.Red,
         modifier = Modifier
-          .size(24.dp)
-          .background(color = if (saved) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.error)
+          .size(30.dp)
       )
     }
   }

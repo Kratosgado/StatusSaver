@@ -3,8 +3,6 @@ package com.kratosgado.statussaver
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -31,26 +29,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.compose.rememberNavController
+import com.kratosgado.statussaver.logic.StatusRepo
 import com.kratosgado.statussaver.ui.MainScreen
 import com.kratosgado.statussaver.ui.theme.AppTheme
 import com.kratosgado.statussaver.ui.viewmodel.AppViewModel
+import com.kratosgado.statussaver.utils.SettingsManager
 import java.io.File
 
 class MainActivity : ComponentActivity() {
   companion object {
     private const val TAG = "MainActivity"
     private const val REQUEST_PERMISSION_CODE = 100
-    private const val SAVED_URI = "savedUri"
   }
 
-  private lateinit var sharedPreferences: SharedPreferences
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-    sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE)
     Log.d(TAG, "Starting Application: checking permissions")
 
     val storage = Environment.getExternalStorageDirectory()
@@ -59,7 +55,6 @@ class MainActivity : ComponentActivity() {
     if (!savedDir.exists()) {
       savedDir.mkdir()
     }
-
 
     setContent {
       AppTheme {
@@ -70,9 +65,7 @@ class MainActivity : ComponentActivity() {
             onPermissionGranted = {
               MainScreen(
                 appViewModel = AppViewModel(
-                  saveDir = savedDir,
-                  context = LocalContext.current,
-                  statusDir = it,
+                  statusRepo = StatusRepo(context = LocalContext.current),
                   navController = rememberNavController()
                 )
               )
@@ -105,16 +98,18 @@ class MainActivity : ComponentActivity() {
   @Composable
   fun CheckPermission(
     modifier: Modifier,
-    onPermissionGranted: @Composable (uri: Uri) -> Unit = {},
+    onPermissionGranted: @Composable () -> Unit,
     initialUri: Uri
   ) {
+
     val context = LocalContext.current
+    val preferences = SettingsManager.getInstance(context)
     var isDirectoryPicked by remember { mutableStateOf(false) }
     var pickedFiles by remember { mutableStateOf<List<Uri>?>(null) }
 
     // check if URI is already saved in shared preferences
-    val savedUriString = sharedPreferences.getString(SAVED_URI, null)
-    val savedUri = savedUriString?.let { Uri.parse(it) }
+    val savedUriString = preferences.getValue(SettingsManager.STATUS_DIR, "")
+    val savedUri = if (savedUriString.isNotBlank()) Uri.parse(savedUriString) else null
 
     if (savedUri != null) {
       restoreAccessToDirectory(context, savedUri) { files ->
@@ -138,20 +133,12 @@ class MainActivity : ComponentActivity() {
           Log.d(TAG, "Directory picked: $uri")
 
           // save URI to shared preferences
-          sharedPreferences.edit().putString(SAVED_URI, uri.toString()).apply()
-
-          val pickedDir = DocumentFile.fromTreeUri(context, uri)
-          pickedFiles = pickedDir?.listFiles()?.mapNotNull {
-            Log.d(TAG, "File uri: ${it.uri}")
-            if (it.isFile and it.name!!.endsWith(".jpg")) it.uri else null
-          }
+          preferences.putValue(SettingsManager.STATUS_DIR, uri.toString())
           isDirectoryPicked = true
         }
       })
-//    dirPickerLauncher.launch(initialUri)
-    if (isDirectoryPicked) onPermissionGranted(
-      savedUri ?: throw IllegalStateException("Directory not picked")
-    )
+
+    if (isDirectoryPicked) onPermissionGranted()
     else
       Column(
         modifier = Modifier.fillMaxSize(),
@@ -164,7 +151,7 @@ class MainActivity : ComponentActivity() {
       }
   }
 
-  fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
+  private fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
     return contentResolver.persistedUriPermissions.any { perm ->
       perm.uri == uri
     }
@@ -179,53 +166,8 @@ class MainActivity : ComponentActivity() {
       val contentResolver = context.contentResolver
       val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
       contentResolver.takePersistableUriPermission(savedUri, flags)
-
-
-      val documentFile = DocumentFile.fromTreeUri(context, savedUri)
-      val files = documentFile?.listFiles()?.mapNotNull {
-        Log.d(TAG, it.uri.toString())
-        if (it.isFile and it.name!!.endsWith(".jpg")) it.uri else null
-      } ?: emptyList()
-
-
-      onFilesRetrieved(files)
     } catch (e: Exception) {
       Log.e(TAG, "Error restoring access to directory: ${e.message}")
     }
-  }
-
-  @Deprecated("Deprecated in Java")
-  override fun onRequestPermissionsResult(
-    requestCode: Int,
-    permissions: Array<out String>,
-    grantResults: IntArray
-  ) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == REQUEST_PERMISSION_CODE) {
-      if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-        //
-      } else {
-        Log.d("Permissions", "${grantResults.find { it != PackageManager.PERMISSION_GRANTED }}")
-      }
-    }
-  }
-
-  private fun checkPermissions() {
-    if (!hasWritePermissions()) {
-      requestPermissions()
-    }
-  }
-
-  private fun hasWritePermissions(): Boolean {
-    return checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-  }
-
-  private fun requestPermissions() {
-    requestPermissions(
-      arrayOf(
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-      ),
-      REQUEST_PERMISSION_CODE,
-    )
   }
 }
