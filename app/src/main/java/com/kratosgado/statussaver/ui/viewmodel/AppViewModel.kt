@@ -1,6 +1,7 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,17 +35,23 @@ class AppViewModel(
     loadStatus()
   }
 
+  private fun log(v: String) {
+    Log.d("AppViewModel", v)
+  }
+
   private fun loadStatus() {
     scope.launch(Dispatchers.IO) {
       try {
         val status = statusRepo.loadStatuses()
-//        val savedStats = statusRepo.loadStatuses()
+        log("Loaded")
         _uiState.update {
           it.copy(
-            statuses = status,
+            images = status.first,
+            videos = status.second
 //            savedStatuses = savedStats
           )
         }
+        log("update ui")
       } catch (e: IOException) {
         _uiState.update { it.copy(error = "Failed to load statuses") }
       }
@@ -53,7 +60,7 @@ class AppViewModel(
   }
 
   private fun updateStatuses(statuses: List<Status>) {
-    _uiState.update { it.copy(statuses = statuses) }
+    _uiState.update { it.copy(images = statuses) }
   }
 
   // handle events
@@ -93,37 +100,13 @@ class AppViewModel(
   fun saveStatus(uri: Uri) {
     scope.launch(Dispatchers.IO) {
       try {
-//        statusRepo.saveStatus(uri)
+        statusRepo.saveStatus(uri)
         loadStatus()
       } catch (e: IOException) {
         _uiState.update { it.copy(error = "Failed to save status") }
       }
 //      try {
-//        Log.d("Saving", "Saving")
-//        val resolver = context.contentResolver
-//        val inputStream = resolver.openInputStream(uri)
 //
-//        if (inputStream != null) {
-//          if (isExternalStorageWritable()) Log.d("Saving", "Writable")
-//          val directory = File(
-//            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-//            "StatusSaver"
-//          )
-//          if (!directory.exists()) {
-//            Log.d("Saving", "creating directory")
-//            directory.mkdirs()
-//          }
-//          val file = DocumentFile.fromSingleUri(context, uri)
-//          val newFile = File(directory, file?.name ?: "default.jpg")
-//          if (newFile.exists()) throw Exception("File has been already saved")
-//          FileOutputStream(newFile).use {
-//            inputStream.copyTo(it)
-//            inputStream.close()
-//          }
-//          val index = images.indexOfFirst { it.first == uri }
-//          images[index] = uri to true
-//          Log.d("StatusItem", "File saved as ${newFile.path}")
-//          Toast.makeText(context, "Saved: ${newFile.path}", Toast.LENGTH_SHORT).show()
 //        } else throw Exception("Cannot open file")
 //      } catch (e: Exception) {
 //        Log.e("SaveStatus", e.message, e.fillInStackTrace())

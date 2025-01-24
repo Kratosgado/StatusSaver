@@ -60,7 +60,7 @@ fun MainScreen(
       composable(route = Screens.Images.name) {
         ImagesScreen(
           modifier = Modifier.fillMaxWidth(),
-          files = remember { appState.statuses },
+          files = remember { appState.images },
           onStatusClick = appViewModel::viewStatus,
           onClickSave = appViewModel::saveStatus,
         )

@@ -43,7 +43,7 @@ fun ImagesScreen(
     items(files.size) { index ->
       val stat = files[index]
       ImageItem(
-        file = file, saved = saved,
+        file = stat.uri, saved = stat.isSaved,
         contentScale = ContentScale.Crop,
         onClickSave = onClickSave,
         modifier = Modifier
