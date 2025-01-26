@@ -10,29 +10,31 @@ import java.io.IOException
 
 class StatusRepository(private val context: Context) {
 
-  suspend fun loadStatuses(statusDirUri: Uri): List<Status> = withContext(Dispatchers.IO) {
-    val statusDir = DocumentFile.fromTreeUri(context, statusDirUri)
-    val statuses = mutableListOf<Status>()
+  suspend fun loadStatuses(statusDirUri: Uri, saveDirUri: Uri): List<Status> =
+    withContext(Dispatchers.IO) {
+      val statusDir = DocumentFile.fromTreeUri(context, statusDirUri)
+      val statuses = mutableListOf<Status>()
+      val saved = mutableListOf<Status>()
 
-    statusDir?.listFiles()?.forEach { file ->
-      when {
-        isImage(file) -> statuses.add(
-          Status.Image(
-            uri = file.uri,
-            name = file.name ?: "Untitled"
+      statusDir?.listFiles()?.forEach { file ->
+        when {
+          isImage(file) -> statuses.add(
+            Status.Image(
+              uri = file.uri,
+              name = file.name ?: "Untitled"
+            )
           )
-        )
 
-        isVideo(file) -> statuses.add(
-          Status.Video(
-            uri = file.uri,
-            name = file.name ?: "Untitled"
+          isVideo(file) -> statuses.add(
+            Status.Video(
+              uri = file.uri,
+              name = file.name ?: "Untitled"
+            )
           )
-        )
+        }
       }
+      return@withContext statuses
     }
-    return@withContext statuses
-  }
 
   suspend fun saveStatus(sourceUri: Uri, saveDirUri: Uri): Boolean = withContext(Dispatchers.IO) {
     try {

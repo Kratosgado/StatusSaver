@@ -3,6 +3,9 @@ accompanistPermissionsVersion = "0.28.0"
 agp = "8.7.1"
 coilComposeVersion = "2.4.0"
 coilVideoVersion = "2.4.0"
+datastorePreferencesCoreVersion = "1.1.2"
+datastorePreferencesVersion = "1.1.2"
+datastoreRxjava3Version = "1.1.2"
 hiltAndroidVersion = "2.51.1"
 hiltAndroidCompilerVersion = "2.51.1"
 hiltNavigationComposeVersion = "1.2.0"
@@ -21,11 +24,15 @@ navigationCompose = "2.8.1"
 uiTextGoogleFonts = "1.7.4"
 documentfile = "1.0.1"
 workRuntimeKtxVersion = "2.7.1"
+datastoreCoreAndroidVersion = "1.1.2"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesVersion" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCoreVersion" }
+androidx-datastore-rxjava3 = { module = "androidx.datastore:datastore-rxjava3", version.ref = "datastoreRxjava3Version" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3ExoplayerVersion" }
@@ -52,6 +59,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

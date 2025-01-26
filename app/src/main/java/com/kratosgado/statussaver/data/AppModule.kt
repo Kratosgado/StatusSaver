@@ -4,17 +4,23 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
   @Provides
-  @ViewModelScoped
+  @Singleton
   fun provideStatusRepository(@ApplicationContext context: Context): StatusRepository {
     return StatusRepository(context)
+  }
+
+  @Provides
+  @Singleton
+  fun provideSettingsManager(@ApplicationContext context: Context): SettingsManager {
+    return SettingsManager(context)
   }
 }

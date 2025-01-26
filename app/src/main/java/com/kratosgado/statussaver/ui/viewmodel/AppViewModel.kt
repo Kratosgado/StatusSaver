@@ -21,11 +21,11 @@ class AppViewModel @Inject constructor(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  fun loadStatuses(statusDirUri: Uri) {
+  fun loadStatuses(statusDirUri: Uri, saveDirUri: Uri) {
     _uiState.value = _uiState.value.copy(isLoading = true)
     viewModelScope.launch {
       try {
-        val statuses = repository.loadStatuses(statusDirUri)
+        val statuses = repository.loadStatuses(statusDirUri, saveDirUri)
         _uiState.value = _uiState.value.copy(
           statuses = statuses,
           isLoading = false,
@@ -56,7 +56,7 @@ class AppViewModel @Inject constructor(
   }
 
   fun setSaveDir(uri: Uri) {
-    _uiState.value = _uiState.value.copy(saveDirUri = uri)
+    _uiState.value = _uiState.value.copy(statusDirUri = uri)
   }
 
   fun clearError() {

@@ -22,23 +22,21 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-//      val navController = rememberNavController()
       val viewModel: AppViewModel = hiltViewModel<AppViewModel>()
       val uiState by viewModel.uiState.collectAsState()
 
       AppTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-
-          if (uiState.saveDirUri == null) {
+          if (uiState.statusDirUri == null) {
             PermissionScreen { uri ->
               viewModel.setSaveDir(uri)
-              viewModel.loadStatuses(uri)
+              viewModel.loadStatuses(uri, uiState.savedDirUri)
             }
           } else {
             MainGrid(
               statuses = uiState.statuses,
               onSaveClick = { status ->
-                viewModel.saveStatus(status, uiState.saveDirUri!!)
+                viewModel.saveStatus(status, uiState.statusDirUri!!)
               },
               onItemClick = { /* Handle item click */ },
               onShareClick = { /* Handle share */ },

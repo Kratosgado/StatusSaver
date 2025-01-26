@@ -59,7 +59,11 @@ dependencies {
   // ExoPlayer for video playback
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.ui)
-  implementation(libs.hilt.android) // di
+  implementation(libs.hilt.android)
+//  implementation(libs.androidx.datastore.core.android) // di
+//  implementation(libs.androidx.datastore.rxjava3)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.datastore.preferences.core)
   kapt(libs.hilt.android.compiler) // di
   implementation(libs.androidx.hilt.navigation.compose) // di
 

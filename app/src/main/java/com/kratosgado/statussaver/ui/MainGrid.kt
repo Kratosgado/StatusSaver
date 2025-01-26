@@ -26,6 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.kratosgado.statussaver.domain.Status
+import com.kratosgado.statussaver.ui.views.SavedScreen
+import com.kratosgado.statussaver.ui.views.SettingsScreen
 import com.kratosgado.statussaver.ui.views.StatusGrid
 
 sealed class Screen(val title: String, val icon: ImageVector) {
@@ -87,20 +89,14 @@ fun MainGrid(
           .padding(innerPadding)
       )
 
-      Screen.Saved -> SavedScreen(modifier = Modifier.padding(innerPadding))
+      Screen.Saved -> SavedScreen(
+        modifier = Modifier.padding(innerPadding),
+        statuses = statuses,
+        onSaveClick = onSaveClick,
+        onItemClick = onItemClick
+      )
+
       Screen.Settings -> SettingsScreen(modifier = Modifier.padding(innerPadding))
     }
   }
-}
-
-@Composable
-fun SavedScreen(modifier: Modifier = Modifier) {
-  // Implement your saved items screen
-  Text("Saved Items Screen", modifier = modifier.fillMaxSize())
-}
-
-@Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
-  // Implement your settings screen
-  Text("Settings Screen", modifier = modifier.fillMaxSize())
 }
