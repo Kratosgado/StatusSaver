@@ -1,6 +1,9 @@
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.jetbrains.kotlin.android)
+  id("kotlin-kapt")
+  id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -37,7 +40,7 @@ android {
     compose = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.1"
+    kotlinCompilerExtensionVersion = "1.5.13"
   }
   packaging {
     resources {
@@ -56,6 +59,9 @@ dependencies {
   // ExoPlayer for video playback
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.ui)
+  implementation(libs.hilt.android) // di
+  kapt(libs.hilt.android.compiler) // di
+  implementation(libs.androidx.hilt.navigation.compose) // di
 
 // Coil for video thumbnails (optional but recommended)
   implementation(libs.coil.video)
@@ -75,4 +81,10 @@ dependencies {
   androidTestImplementation(libs.androidx.ui.test.junit4)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Allow references to generated code
+kapt {
+  correctErrorTypes = true
+
 }

@@ -3,7 +3,10 @@ accompanistPermissionsVersion = "0.28.0"
 agp = "8.7.1"
 coilComposeVersion = "2.4.0"
 coilVideoVersion = "2.4.0"
-kotlin = "1.9.0"
+hiltAndroidVersion = "2.51.1"
+hiltAndroidCompilerVersion = "2.51.1"
+hiltNavigationComposeVersion = "1.2.0"
+kotlin = "1.9.23"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -23,6 +26,7 @@ workRuntimeKtxVersion = "2.7.1"
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3ExoplayerVersion" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3UiVersion" }
@@ -31,6 +35,8 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 coil-video = { module = "io.coil-kt:coil-video", version.ref = "coilVideoVersion" }
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissionsVersion" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

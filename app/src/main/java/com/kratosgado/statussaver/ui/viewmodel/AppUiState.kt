@@ -1,14 +1,12 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
-import com.kratosgado.statussaver.ui.Screens
-import com.kratosgado.statussaver.utils.Status
+import android.net.Uri
+import com.kratosgado.statussaver.domain.Status
 
 
 data class AppUiState(
-  val selectedScreen: Screens = Screens.Images,
-  val canNavigateBack: Boolean = false,
-  val images: List<Status> = emptyList(),
-  val videos: List<Status> = emptyList(),
-  val savedStatuses: List<Status> = emptyList(),
-  val error: String? = null
+  val statuses: List<Status> = emptyList(),
+  val isLoading: Boolean = true,
+  val error: String? = null,
+  val saveDirUri: Uri? = null
 )
