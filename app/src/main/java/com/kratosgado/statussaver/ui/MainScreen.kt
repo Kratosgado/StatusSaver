@@ -25,7 +25,7 @@ package com.kratosgado.statussaver.ui
 //import com.kratosgado.statussaver.ui.viewmodel.AppViewModel
 //import com.kratosgado.statussaver.ui.views.ImagesScreen
 //import com.kratosgado.statussaver.ui.views.SavedScreen
-//import com.kratosgado.statussaver.ui.views.SettingsScreen
+////import com.kratosgado.statussaver.ui.views.SettingsScreen
 //import com.kratosgado.statussaver.ui.views.StatusPager
 //import com.kratosgado.statussaver.ui.views.VideosScreen
 //
@@ -103,27 +103,3 @@ package com.kratosgado.statussaver.ui
 //    }
 //  }
 //}
-//
-////@Preview(showBackground = true)
-////@Composable
-////fun PreviewMainScreen() {
-////  val dir = "E:\\MY FILES\\Camera\\Camera Roll"
-////  AppTheme {
-////    MainScreen(appViewModel = AppViewModel(navController = rememberNavController(), statusDir = dir, saveDir = dir))
-////  }
-////}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun DarkPreviewMainScreen() {
-//  val dir = "/home/kratosgado/Pictures/Screenshots"
-//  AppTheme(darkTheme = true) {
-//    MainScreen(
-//      appViewModel = AppViewModel(
-//        statusRepo = Repository(LocalContext.current),
-//        navController = rememberNavController(),
-//      )
-//    )
-//  }
-//}
-//
