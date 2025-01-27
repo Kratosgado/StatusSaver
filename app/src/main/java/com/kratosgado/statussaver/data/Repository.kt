@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.kratosgado.statussaver.domain.Status
+import com.kratosgado.statussaver.domain.StatusType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -15,48 +16,36 @@ class StatusRepository(private val context: Context) {
     withContext(Dispatchers.IO) {
       val statusDir = DocumentFile.fromTreeUri(context, statusDirUri)
       val savedDir = DocumentFile.fromFile(saveDirUri)
-      val statuses = mutableListOf<Status>()
-      val saved = mutableListOf<Status>()
+      val statuses = mutableMapOf<String, Status>()
+      val saved = mutableMapOf<String, Status>()
 
       savedDir.listFiles().forEach { file ->
-        when {
-          isImage(file) -> saved.add(
-            Status.Image(
-              uri = file.uri,
-              name = file.name ?: "Untitled",
-              isSaved = true,
-            )
-          )
-
-          isVideo(file) -> saved.add(
-            Status.Video(
-              uri = file.uri,
-              name = file.name ?: "Untitled",
-              isSaved = true,
-            )
-          )
+        val type = when {
+          isImage(file) -> StatusType.Image
+          isVideo(file) -> StatusType.Video
+          else -> return@forEach
         }
+        saved[file.name!!] = Status(
+          uri = file.uri,
+          name = file.name ?: "Untitled",
+          isSaved = true,
+          type = type
+        )
       }
       statusDir?.listFiles()?.forEach { file ->
-        when {
-          isImage(file) -> statuses.add(
-            Status.Image(
-              uri = file.uri,
-              name = file.name ?: "Untitled",
-              isSaved = saved.any { it.id == file.name }
-            )
-          )
-
-          isVideo(file) -> statuses.add(
-            Status.Video(
-              uri = file.uri,
-              name = file.name ?: "Untitled",
-              isSaved = saved.any { it.id == file.name }
-            )
-          )
+        val type = when {
+          isImage(file) -> StatusType.Image
+          isVideo(file) -> StatusType.Video
+          else -> return@forEach
         }
+        statuses[file.name!!] = Status(
+          uri = file.uri,
+          name = file.name ?: "Untitled",
+          isSaved = saved.containsKey(file.name),
+          type = type
+        )
       }
-      return@withContext Pair(statuses, saved)
+      return@withContext Pair(statuses.values.toList(), saved.values.toList())
     }
 
   suspend fun saveStatus(sourceUri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {

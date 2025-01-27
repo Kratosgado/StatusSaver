@@ -47,11 +47,8 @@ class AppViewModel @Inject constructor(
 
   fun saveStatus(status: Status) {
     viewModelScope.launch {
-      val uri = when (status) {
-        is Status.Image -> status.uri
-        is Status.Video -> status.uri
-      }
-      val success = repository.saveStatus(uri, _uiState.value.savedDirUri!!)
+
+      val success = repository.saveStatus(status.uri, _uiState.value.savedDirUri!!)
       if (!success) {
         _uiState.value = _uiState.value.copy(
           error = "Failed to save status"

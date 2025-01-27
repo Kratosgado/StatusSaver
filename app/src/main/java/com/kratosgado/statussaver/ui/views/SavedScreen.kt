@@ -16,7 +16,7 @@ fun SavedScreen(
   modifier: Modifier = Modifier,
   statuses: List<Status>,
   onSaveClick: (Status) -> Unit,
-  onItemClick: (Status) -> Unit
+  onItemClick: (Pair<Int, Boolean>) -> Unit
 ) {
   LazyVerticalGrid(
     columns = GridCells.Fixed(3),
@@ -28,7 +28,7 @@ fun SavedScreen(
       StatusItem(
         modifier = Modifier
           .padding(2.dp)
-          .clickable { onItemClick(status) },
+          .clickable { onItemClick(Pair(index, false)) },
         status = status,
         onSaveClick = { onSaveClick(status) },
 //        onClick = { onItemClick(status) }

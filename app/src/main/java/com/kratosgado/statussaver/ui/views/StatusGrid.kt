@@ -16,7 +16,7 @@ fun StatusGrid(
   modifier: Modifier = Modifier,
   statuses: List<Status>,
   onSaveClick: (Status) -> Unit,
-  onItemClick: (Status) -> Unit
+  onItemClick: (Pair<Int, Boolean>) -> Unit
 ) {
   LazyVerticalGrid(
     columns = GridCells.Fixed(3),
@@ -28,7 +28,7 @@ fun StatusGrid(
       StatusItem(
         status = status,
         modifier = Modifier
-          .clickable { onItemClick(status) }
+          .clickable { onItemClick(Pair(index, true)) }
           .padding(2.dp),
         onSaveClick = { onSaveClick(status) },
       )

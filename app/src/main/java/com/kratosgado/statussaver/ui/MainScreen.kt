@@ -44,6 +44,7 @@ fun MainScreen(
   onSendClick: () -> Unit
 ) {
   var selectedDestination by remember { mutableStateOf<Screen>(Screen.Statuses) }
+  var index by remember { mutableStateOf(Pair(0, true)) }
   val destinations = listOf(Screen.Statuses, Screen.Saved, Screen.Settings)
 
   Scaffold(
@@ -51,7 +52,7 @@ fun MainScreen(
       AppBar(
         currentScreen = selectedDestination,
         canNavigateBack = selectedDestination == Screen.View,
-        navigateUp = { selectedDestination = Screen.Statuses })
+        navigateUp = { selectedDestination = if (index.second) Screen.Statuses else Screen.Saved })
     },
     bottomBar = {
       NavigationBar {
@@ -70,7 +71,10 @@ fun MainScreen(
       Screen.Statuses -> StatusGrid(
         statuses = statuses,
         onSaveClick = onSaveClick,
-        onItemClick = { selectedDestination = Screen.View },
+        onItemClick = {
+          index = it
+          selectedDestination = Screen.View
+        },
         modifier = Modifier
           .fillMaxSize()
           .padding(innerPadding)
@@ -80,11 +84,18 @@ fun MainScreen(
         modifier = Modifier.padding(innerPadding),
         statuses = saved,
         onSaveClick = onSaveClick,
-        onItemClick = {}
+        onItemClick = {
+          index = it
+          selectedDestination = Screen.View
+        }
       )
 
       Screen.Settings -> SettingsScreen(modifier = Modifier.padding(innerPadding))
-      Screen.View -> StatusPager(stats = statuses, onSaveClick = onSaveClick, startIndex = 0)
+      Screen.View -> StatusPager(
+        stats = if (index.second) statuses else saved,
+        onSaveClick = onSaveClick,
+        startIndex = index.first
+      )
     }
   }
 }
