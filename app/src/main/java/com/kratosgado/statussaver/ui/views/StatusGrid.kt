@@ -1,6 +1,8 @@
 package com.kratosgado.statussaver.ui.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
@@ -17,7 +19,7 @@ fun StatusGrid(
   onItemClick: (Status) -> Unit
 ) {
   LazyVerticalGrid(
-    columns = GridCells.Fixed(2),
+    columns = GridCells.Fixed(3),
     modifier = modifier,
     contentPadding = PaddingValues(8.dp)
   ) {
@@ -25,8 +27,10 @@ fun StatusGrid(
       val status = statuses[index]
       StatusItem(
         status = status,
+        modifier = Modifier
+          .clickable { onItemClick(status) }
+          .padding(2.dp),
         onSaveClick = { onSaveClick(status) },
-        onClick = { onItemClick(status) }
       )
     }
   }

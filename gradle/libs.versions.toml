@@ -25,6 +25,7 @@ uiTextGoogleFonts = "1.7.4"
 documentfile = "1.0.1"
 workRuntimeKtxVersion = "2.7.1"
 datastoreCoreAndroidVersion = "1.1.2"
+foundationLayoutAndroidVersion = "1.7.2"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager" }
@@ -60,6 +61,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

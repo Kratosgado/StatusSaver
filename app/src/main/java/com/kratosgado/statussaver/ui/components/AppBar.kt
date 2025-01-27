@@ -14,7 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kratosgado.statussaver.domain.Screens
+import com.kratosgado.statussaver.ui.Screen
 import com.kratosgado.statussaver.ui.theme.AppTheme
 
 
@@ -23,11 +23,11 @@ import com.kratosgado.statussaver.ui.theme.AppTheme
 fun AppBar(
   modifier: Modifier = Modifier,
   canNavigateBack: Boolean = false,
-  currentScreen: Screens,
+  currentScreen: Screen,
   navigateUp: () -> Unit,
 ) {
   TopAppBar(
-    title = { Text(currentScreen.name) },
+    title = { Text(currentScreen.title) },
     colors = TopAppBarDefaults.mediumTopAppBarColors(
       containerColor = MaterialTheme.colorScheme.primaryContainer
     ),
@@ -56,7 +56,7 @@ fun PreviewAppBar() {
   AppTheme {
     AppBar(
       canNavigateBack = true,
-      currentScreen = Screens.Images,
+      currentScreen = Screen.Statuses,
       navigateUp = {},
       modifier = Modifier
     )

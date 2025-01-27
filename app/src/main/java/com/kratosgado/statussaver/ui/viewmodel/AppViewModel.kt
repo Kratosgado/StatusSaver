@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,13 +22,17 @@ class AppViewModel @Inject constructor(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  fun loadStatuses(statusDirUri: Uri, saveDirUri: Uri) {
+  fun loadStatuses() {
     _uiState.value = _uiState.value.copy(isLoading = true)
     viewModelScope.launch {
       try {
-        val statuses = repository.loadStatuses(statusDirUri, saveDirUri)
+        val (statuses, saved) = repository.loadStatuses(
+          _uiState.value.statusDirUri!!,
+          _uiState.value.savedDirUri!!
+        )
         _uiState.value = _uiState.value.copy(
           statuses = statuses,
+          saved = saved,
           isLoading = false,
           error = null
         )
@@ -40,13 +45,13 @@ class AppViewModel @Inject constructor(
     }
   }
 
-  fun saveStatus(status: Status, saveDirUri: Uri) {
+  fun saveStatus(status: Status) {
     viewModelScope.launch {
       val uri = when (status) {
         is Status.Image -> status.uri
         is Status.Video -> status.uri
       }
-      val success = repository.saveStatus(uri, saveDirUri)
+      val success = repository.saveStatus(uri, _uiState.value.savedDirUri!!)
       if (!success) {
         _uiState.value = _uiState.value.copy(
           error = "Failed to save status"
@@ -55,8 +60,8 @@ class AppViewModel @Inject constructor(
     }
   }
 
-  fun setSaveDir(uri: Uri) {
-    _uiState.value = _uiState.value.copy(statusDirUri = uri)
+  fun setSaveDir(uri: Uri, saveDirUri: File) {
+    _uiState.value = _uiState.value.copy(statusDirUri = uri, savedDirUri = saveDirUri)
   }
 
   fun clearError() {

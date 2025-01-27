@@ -64,6 +64,7 @@ dependencies {
 //  implementation(libs.androidx.datastore.rxjava3)
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.datastore.preferences.core)
+  implementation(libs.androidx.foundation.layout.android)
   kapt(libs.hilt.android.compiler) // di
   implementation(libs.androidx.hilt.navigation.compose) // di
 

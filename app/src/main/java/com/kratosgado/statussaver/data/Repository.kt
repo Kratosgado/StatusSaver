@@ -6,43 +6,66 @@ import androidx.documentfile.provider.DocumentFile
 import com.kratosgado.statussaver.domain.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.IOException
 
 class StatusRepository(private val context: Context) {
 
-  suspend fun loadStatuses(statusDirUri: Uri, saveDirUri: Uri): List<Status> =
+  suspend fun loadStatuses(statusDirUri: Uri, saveDirUri: File): Pair<List<Status>, List<Status>> =
     withContext(Dispatchers.IO) {
       val statusDir = DocumentFile.fromTreeUri(context, statusDirUri)
+      val savedDir = DocumentFile.fromFile(saveDirUri)
       val statuses = mutableListOf<Status>()
       val saved = mutableListOf<Status>()
 
+      savedDir.listFiles().forEach { file ->
+        when {
+          isImage(file) -> saved.add(
+            Status.Image(
+              uri = file.uri,
+              name = file.name ?: "Untitled",
+              isSaved = true,
+            )
+          )
+
+          isVideo(file) -> saved.add(
+            Status.Video(
+              uri = file.uri,
+              name = file.name ?: "Untitled",
+              isSaved = true,
+            )
+          )
+        }
+      }
       statusDir?.listFiles()?.forEach { file ->
         when {
           isImage(file) -> statuses.add(
             Status.Image(
               uri = file.uri,
-              name = file.name ?: "Untitled"
+              name = file.name ?: "Untitled",
+              isSaved = saved.any { it.id == file.name }
             )
           )
 
           isVideo(file) -> statuses.add(
             Status.Video(
               uri = file.uri,
-              name = file.name ?: "Untitled"
+              name = file.name ?: "Untitled",
+              isSaved = saved.any { it.id == file.name }
             )
           )
         }
       }
-      return@withContext statuses
+      return@withContext Pair(statuses, saved)
     }
 
-  suspend fun saveStatus(sourceUri: Uri, saveDirUri: Uri): Boolean = withContext(Dispatchers.IO) {
+  suspend fun saveStatus(sourceUri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
     try {
-      val saveDir = DocumentFile.fromTreeUri(context, saveDirUri)
+      val saveDir = DocumentFile.fromFile(savedDir)
       val sourceFile = DocumentFile.fromSingleUri(context, sourceUri)
       val inputStream = context.contentResolver.openInputStream(sourceUri)
 
-      if (saveDir == null || sourceFile == null || inputStream == null) {
+      if (sourceFile == null || inputStream == null) {
         throw IOException("Invalid file or directory")
       }
 

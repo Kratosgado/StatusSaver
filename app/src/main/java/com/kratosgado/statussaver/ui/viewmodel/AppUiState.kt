@@ -1,8 +1,8 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
 import android.net.Uri
-import android.os.Environment
 import com.kratosgado.statussaver.domain.Status
+import java.io.File
 
 
 data class AppUiState(
@@ -11,5 +11,5 @@ data class AppUiState(
   val isLoading: Boolean = true,
   val error: String? = null,
   val statusDirUri: Uri? = null,
-  val savedDirUri: Uri = Uri.fromFile(Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_DCIM}/StatusSaver"))
+  val savedDirUri: File? = null,
 )
