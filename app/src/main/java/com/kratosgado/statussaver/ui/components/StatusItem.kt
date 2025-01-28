@@ -1,6 +1,5 @@
 package com.kratosgado.statussaver.ui.components
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +32,6 @@ fun StatusItem(
   contentScale: ContentScale = ContentScale.Crop,
   status: Status,
   onSaveClick: () -> Unit,
-  onPlay: (Uri) -> Unit
 ) {
   Box(modifier = Modifier.aspectRatio(0.75f)) {
     when (status.type) {
@@ -59,15 +57,13 @@ fun StatusItem(
             modifier = Modifier.fillMaxSize()
           )
         }
-        IconButton(onClick = { onPlay(status.uri) }) {
-          Icon(
-            imageVector = Icons.Default.PlayArrow,
-            contentDescription = null,
-            modifier = Modifier
-              .align(Alignment.Center)
-              .size(80.dp)
-          )
-        }
+        Icon(
+          imageVector = Icons.Default.PlayArrow,
+          contentDescription = null,
+          modifier = Modifier
+            .align(Alignment.Center)
+            .size(80.dp)
+        )
       }
     }
     IconButton(
