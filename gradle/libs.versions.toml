@@ -21,6 +21,7 @@ lifecycleViewmodelCompose = "2.6.2"
 media3ExoplayerVersion = "1.2.0"
 media3UiVersion = "1.2.0"
 navigationCompose = "2.8.1"
+playServicesAdsVersion = "23.6.0"
 uiTextGoogleFonts = "1.7.4"
 documentfile = "1.0.1"
 workRuntimeKtxVersion = "2.7.1"
@@ -62,6 +63,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,21 +1,58 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keep class com.kratosgado.statussaver.ui.** { *; }
+-keep @androidx.compose.material3.ExperimentalMaterial3Api class *
+-keep class * extends androidx.compose.ui.graphics.vector.ImageVector
+# Keep ViewModels
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+
+# Keep Parcelables
+-keep class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
+# Keep Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
+# ========= Hilt =========
+-keep class com.kratosgado.statussaver.Hilt_* { *; }
+-keep @dagger.hilt.android.AndroidEntryPoint class * { *; }
+-keepclassmembers class * {
+    @dagger.hilt.* *;
+}
+
+# ========= Jetpack Compose =========
+-keep @androidx.compose.runtime.Composable class *
+
+# ========= ExoPlayer/Media3 =========
+-keep class androidx.media3.** { *; }
+-dontwarn androidx.media3.**
+
+# ========= Coil =========
+-keep class coil.** { *; }
+-keep class coil.request.ImageRequest
+
+# ========= Navigation Component =========
+-keep class androidx.navigation.** { *; }
+#-keepclassmembers class * extends androidx.navigation.fragment.NavHostFragment {
+#    public <init>();
+#}
+
+# ========= DataStore =========
+-keep class androidx.datastore.** { *; }
+
+# ========= WorkManager =========
+-keep class androidx.work.** { *; }
+
+# ========= General AndroidX =========
+-keep class androidx.lifecycle.** { *; }
+-keep class androidx.fragment.** { *; }

@@ -6,6 +6,7 @@ plugins {
 
 }
 
+
 android {
   namespace = "com.kratosgado.statussaver"
   compileSdk = 35
@@ -25,7 +26,8 @@ android {
 
   buildTypes {
     release {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true // Enable resource shrinking
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
@@ -67,6 +69,8 @@ dependencies {
   implementation(libs.androidx.foundation.layout.android)
   kapt(libs.hilt.android.compiler) // di
   implementation(libs.androidx.hilt.navigation.compose) // di
+  implementation(libs.play.services.ads)
+
 
 // Coil for video thumbnails (optional but recommended)
   implementation(libs.coil.video)

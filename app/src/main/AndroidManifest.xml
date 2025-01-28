@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StatusSaver"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gsm.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7728407038529891~1825114375" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
