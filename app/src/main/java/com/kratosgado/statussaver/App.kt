@@ -5,6 +5,10 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -19,7 +23,7 @@ import java.util.Date
 
 
 @HiltAndroidApp
-class App : Application(), Application.ActivityLifecycleCallbacks {
+class App : Application(), Application.ActivityLifecycleCallbacks, LifecycleObserver {
   companion object {
     private const val LOG_TAG = "AppOpenAdManager"
     private const val AD_UNIT_ID = "ca-app-pub-3940256099942544/9257395921"
@@ -36,6 +40,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
       // Initialize the Google Mobile Ads SDK on a background thread.
       MobileAds.initialize(this@App) {}
     }
+    ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     appOpenAdManager = AppOpenAdManager()
   }
 
@@ -146,7 +151,27 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
       return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4)
     }
 
+    /** LifecycleObserver method that shows the app open ad when the app moves to foreground. */
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onMoveToForeground() {
+      // Show the ad (if available) when the app moves to foreground.
+      currentActivity?.let {
+        appOpenAdManager.showAdIfAvailable(it)
+      }
+    }
+
+    /** Show the ad if one isn't already showing. */
+    fun showAdIfAvailable(activity: Activity) {
+      showAdIfAvailable(
+        activity,
+        object : OnShowAdCompleteListener {
+          override fun onShowAdComplete() {
+            // Empty because the user will go back to the activity that shows the ad.
+          }
+        })
+    }
   }
+
 
   override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
