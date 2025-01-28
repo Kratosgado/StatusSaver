@@ -8,11 +8,15 @@ import com.kratosgado.statussaver.domain.StatusType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 class StatusRepository(private val context: Context) {
 
-  suspend fun loadStatuses(statusDirUri: Uri, saveDirUri: File): Pair<List<Status>, List<Status>> =
+  suspend fun loadStatuses(
+    statusDirUri: Uri,
+    saveDirUri: File
+  ): Pair<Map<String, Status>, Map<String, Status>> =
     withContext(Dispatchers.IO) {
       val statusDir = DocumentFile.fromTreeUri(context, statusDirUri)
       val savedDir = DocumentFile.fromFile(saveDirUri)
@@ -45,31 +49,20 @@ class StatusRepository(private val context: Context) {
           type = type
         )
       }
-      return@withContext Pair(statuses.values.toList(), saved.values.toList())
+      return@withContext Pair(statuses, saved)
     }
 
-  suspend fun saveStatus(sourceUri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
+  suspend fun saveStatus(uri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
     try {
-      val saveDir = DocumentFile.fromFile(savedDir)
-      val sourceFile = DocumentFile.fromSingleUri(context, sourceUri)
-      val inputStream = context.contentResolver.openInputStream(sourceUri)
+      val resolver = context.contentResolver
+      val inputStream = resolver.openInputStream(uri)
+      val file = DocumentFile.fromSingleUri(context, uri)
+      val newFile = File(savedDir, file?.name ?: "default.jpg")
 
-      if (sourceFile == null || inputStream == null) {
-        throw IOException("Invalid file or directory")
+      FileOutputStream(newFile).use {
+        inputStream?.copyTo(it)
+        inputStream?.close()
       }
-
-      val existingFile = saveDir.findFile(sourceFile.name ?: "")
-      if (existingFile != null) throw IOException("File already exists")
-
-      val newFile = saveDir.createFile(
-        sourceFile.type ?: "image/jpeg",
-        sourceFile.name ?: "status_${System.currentTimeMillis()}"
-      )
-
-      context.contentResolver.openOutputStream(newFile?.uri ?: throw IOException())?.use { output ->
-        inputStream.copyTo(output)
-      }
-
       true
     } catch (e: IOException) {
       false

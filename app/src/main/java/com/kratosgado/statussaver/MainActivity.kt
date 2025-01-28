@@ -2,6 +2,7 @@ package com.kratosgado.statussaver
 
 import android.os.Bundle
 import android.os.Environment
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kratosgado.statussaver.ui.MainScreen
 import com.kratosgado.statussaver.ui.components.ErrorDialog
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
       AppTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+          val context = LocalContext.current
           if (uiState.statusDirUri == null) {
             PermissionScreen { uri ->
               viewModel.setSaveDir(uri, savedDir)
@@ -44,10 +47,12 @@ class MainActivity : ComponentActivity() {
             }
           } else {
             MainScreen(
-              statuses = uiState.statuses,
-              saved = uiState.saved,
+              statuses = uiState.statuses.values.toList(),
+              saved = uiState.saved.values.toList(),
               onSaveClick = { status ->
                 viewModel.saveStatus(status)
+                Toast.makeText(context, "File saved to: ${uiState.savedDirUri}", Toast.LENGTH_SHORT)
+                  .show()
               },
               onShareClick = { /* Handle share */ },
               onSendClick = { /* Handle send */ }

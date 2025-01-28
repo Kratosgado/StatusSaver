@@ -31,6 +31,7 @@ fun StatusGrid(
           .clickable { onItemClick(Pair(index, true)) }
           .padding(2.dp),
         onSaveClick = { onSaveClick(status) },
+        onPlay = {}
       )
     }
   }

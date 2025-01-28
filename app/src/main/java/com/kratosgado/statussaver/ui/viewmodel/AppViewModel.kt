@@ -47,13 +47,28 @@ class AppViewModel @Inject constructor(
 
   fun saveStatus(status: Status) {
     viewModelScope.launch {
+      val stats = _uiState.value.statuses.toMutableMap()
+      val saved = _uiState.value.saved.toMutableMap()
+      if (saved.containsKey(status.name)) {
+        _uiState.value = _uiState.value.copy(
+          error = "File Already Exists"
+        )
+        return@launch
+      }
 
       val success = repository.saveStatus(status.uri, _uiState.value.savedDirUri!!)
       if (!success) {
         _uiState.value = _uiState.value.copy(
           error = "Failed to save status"
         )
+        return@launch
       }
+      stats[status.name] = status.copy(isSaved = true)
+      saved[status.name] = status.copy(isSaved = true)
+      _uiState.value = _uiState.value.copy(
+        statuses = stats,
+        saved = saved
+      )
     }
   }
 

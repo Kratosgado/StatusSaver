@@ -31,6 +31,7 @@ fun SavedScreen(
           .clickable { onItemClick(Pair(index, false)) },
         status = status,
         onSaveClick = { onSaveClick(status) },
+        onPlay = {}
 //        onClick = { onItemClick(status) }
       )
     }
