@@ -70,6 +70,7 @@ dependencies {
   kapt(libs.hilt.android.compiler) // di
   implementation(libs.androidx.hilt.navigation.compose) // di
   implementation(libs.play.services.ads)
+  implementation(libs.androidx.lifecycle.process)
 
 
 // Coil for video thumbnails (optional but recommended)

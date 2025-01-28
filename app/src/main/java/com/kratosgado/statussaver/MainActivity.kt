@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     val backgroundScope = CoroutineScope(Dispatchers.IO)
     backgroundScope.launch {
-      MobileAds.initialize(this@MainActivity)
+      MobileAds.initialize(this@MainActivity) {}
     }
     setContent {
       val savedDir =
