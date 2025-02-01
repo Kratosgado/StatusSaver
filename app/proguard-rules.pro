@@ -56,3 +56,9 @@
 # ========= General AndroidX =========
 -keep class androidx.lifecycle.** { *; }
 -keep class androidx.fragment.** { *; }
+
+# AdMob
+-keep public class com.google.android.gms.ads.** { public *; }
+-keep public class com.google.ads.** { public *; }
+-keep class com.google.android.gms.common.GooglePlayServicesUtil { *; }
+-keep class com.google.android.gms.ads.identifier.AdvertisingIdClient { *; }

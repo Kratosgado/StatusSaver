@@ -1,9 +1,11 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
 import android.net.Uri
+import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kratosgado.statussaver.data.SettingsManager
 import com.kratosgado.statussaver.data.StatusRepository
 import com.kratosgado.statussaver.domain.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,11 +18,31 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel @Inject constructor(
   val handle: SavedStateHandle,
-  private val repository: StatusRepository
+  private val repository: StatusRepository,
+  private val settingsManager: SettingsManager
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
+
+  init {
+    loadSettings()
+  }
+
+  private fun loadSettings() {
+    viewModelScope.launch {
+      settingsManager.statusLocation.collect {
+        it?.let {
+          val savedDir = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            "StatusSaver"
+          )
+          setSaveDir(it, savedDir)
+          loadStatuses()
+        }
+      }
+    }
+  }
 
   fun loadStatuses() {
     _uiState.value = _uiState.value.copy(isLoading = true)

@@ -24,6 +24,7 @@ class SettingsManager @Inject constructor(@ApplicationContext context: Context) 
 
   companion object Keys {
     val SAVE_LOCATION = stringPreferencesKey("save_location")
+    val STATUS_LOCATION = stringPreferencesKey("status_location")
     val AUTO_SAVE = booleanPreferencesKey("auto_save")
     val NOTIFICATIONS = booleanPreferencesKey("notifications")
     val VIBRATION = booleanPreferencesKey("vibration")
@@ -31,9 +32,9 @@ class SettingsManager @Inject constructor(@ApplicationContext context: Context) 
   }
 
   // Save Location (URI)
-  suspend fun saveLocation(uri: Uri) {
+  suspend fun setUri(uri: Uri, loc: Preferences.Key<String>) {
     dataStore.edit { preferences ->
-      preferences[SAVE_LOCATION] = uri.toString()
+      preferences[loc] = uri.toString()
     }
   }
 
@@ -41,6 +42,10 @@ class SettingsManager @Inject constructor(@ApplicationContext context: Context) 
     .map { preferences ->
       preferences[SAVE_LOCATION]?.let { Uri.parse(it) }
     }
+
+  val statusLocation: Flow<Uri?> = dataStore.data.map { pref ->
+    pref[STATUS_LOCATION]?.let { Uri.parse(it) }
+  }
 
   // Auto Save
   suspend fun setAutoSave(enabled: Boolean) {

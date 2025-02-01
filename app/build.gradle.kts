@@ -3,7 +3,6 @@ plugins {
   alias(libs.plugins.jetbrains.kotlin.android)
   id("kotlin-kapt")
   id("com.google.dagger.hilt.android")
-
 }
 
 
@@ -15,8 +14,8 @@ android {
     applicationId = "com.kratosgado.statussaver"
     minSdk = 24
     targetSdk = 35
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = 3
+    versionName = "1.1-alpha"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables {
@@ -70,6 +69,10 @@ dependencies {
   kapt(libs.hilt.android.compiler) // di
   implementation(libs.androidx.hilt.navigation.compose) // di
   implementation(libs.play.services.ads)
+  implementation(libs.play.services.ads.lite)
+
+  // For GDPR compliance (required in EU)
+  implementation(libs.user.messaging.platform)
   implementation(libs.androidx.lifecycle.process)
 
 

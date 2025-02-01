@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
         android:name=".App"
@@ -17,8 +20,9 @@
         android:theme="@style/Theme.StatusSaver"
         tools:targetApi="31">
         <meta-data
-            android:name="com.google.android.gsm.ads.APPLICATION_ID"
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-7728407038529891~1825114375" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,5 +1,6 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kratosgado.statussaver.data.SettingsManager
@@ -41,7 +42,13 @@ class SettingsViewModel @Inject constructor(
 
   fun setSaveLocation(uri: String) {
     viewModelScope.launch {
-      settingsManager.saveLocation(android.net.Uri.parse(uri))
+      settingsManager.setUri(android.net.Uri.parse(uri), SettingsManager.SAVE_LOCATION)
+    }
+  }
+
+  fun setStatusLocation(uri: Uri) {
+    viewModelScope.launch {
+      settingsManager.setUri(uri, SettingsManager.STATUS_LOCATION)
     }
   }
 

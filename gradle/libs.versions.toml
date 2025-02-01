@@ -22,9 +22,11 @@ lifecycleViewmodelCompose = "2.6.2"
 media3ExoplayerVersion = "1.2.0"
 media3UiVersion = "1.2.0"
 navigationCompose = "2.8.1"
+playServicesAdsLiteVersion = "23.6.0"
 playServicesAdsVersion = "23.6.0"
 uiTextGoogleFonts = "1.7.4"
 documentfile = "1.0.1"
+userMessagingPlatformVersion = "3.1.0"
 workRuntimeKtxVersion = "2.7.1"
 datastoreCoreAndroidVersion = "1.1.2"
 foundationLayoutAndroidVersion = "1.7.2"
@@ -66,6 +68,8 @@ androidx-documentfile = { group = "androidx.documentfile", name = "documentfile"
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
+play-services-ads-lite = { module = "com.google.android.gms:play-services-ads-lite", version.ref = "playServicesAdsLiteVersion" }
+user-messaging-platform = { module = "com.google.android.ump:user-messaging-platform", version.ref = "userMessagingPlatformVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
