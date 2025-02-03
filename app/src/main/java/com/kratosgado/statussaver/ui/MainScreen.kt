@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,40 +18,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
 import com.kratosgado.statussaver.domain.Status
 import com.kratosgado.statussaver.ui.components.AppBar
 import com.kratosgado.statussaver.ui.views.SavedScreen
 import com.kratosgado.statussaver.ui.views.SettingsScreen
 import com.kratosgado.statussaver.ui.views.StatusGrid
-import com.kratosgado.statussaver.ui.views.StatusPager
 
 sealed class Screen(val title: String, val icon: ImageVector) {
   data object Statuses : Screen("Statuses", Icons.Default.PlayArrow)
   data object Saved : Screen("Saved", Icons.Default.CheckCircle)
   data object Settings : Screen("Settings", Icons.Default.Settings)
-  data object View : Screen("View", icon = Icons.Default.Edit)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
   statuses: List<Status>,
   saved: List<Status>,
   onSaveClick: (Status) -> Unit,
   onShareClick: () -> Unit,
-  shareStatus: (Status) -> Unit
+  navController: NavController,
 ) {
   var selectedDestination by remember { mutableStateOf<Screen>(Screen.Statuses) }
-  var index by remember { mutableStateOf(Pair(0, true)) }
   val destinations = listOf(Screen.Statuses, Screen.Saved, Screen.Settings)
 
   Scaffold(
     topBar = {
       AppBar(
         currentScreen = selectedDestination,
-        canNavigateBack = selectedDestination == Screen.View,
         onShareClick = onShareClick,
-        navigateUp = { selectedDestination = if (index.second) Screen.Statuses else Screen.Saved })
+      )
     },
     bottomBar = {
       NavigationBar {
@@ -73,8 +68,7 @@ fun MainScreen(
         statuses = statuses,
         onSaveClick = onSaveClick,
         onItemClick = {
-          index = it
-          selectedDestination = Screen.View
+          navController.navigate("status/${it.first}/${it.second}")
         },
         modifier = Modifier
           .fillMaxSize()
@@ -86,17 +80,11 @@ fun MainScreen(
         statuses = saved,
         onSaveClick = onSaveClick,
         onItemClick = {
-          index = it
-          selectedDestination = Screen.View
+          navController.navigate("status/${it.first}/${it.second}")
         }
       )
 
       Screen.Settings -> SettingsScreen(modifier = Modifier.padding(innerPadding))
-      Screen.View -> StatusPager(
-        stats = if (index.second) statuses else saved,
-        onSaveClick = onSaveClick,
-        startIndex = index.first
-      )
     }
   }
 }

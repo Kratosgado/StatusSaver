@@ -1,7 +1,6 @@
 package com.kratosgado.statussaver.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,9 +21,7 @@ import com.kratosgado.statussaver.ui.theme.AppTheme
 @Composable
 fun AppBar(
   modifier: Modifier = Modifier,
-  canNavigateBack: Boolean = false,
   currentScreen: Screen,
-  navigateUp: () -> Unit,
   onShareClick: () -> Unit
 ) {
   TopAppBar(
@@ -33,13 +30,6 @@ fun AppBar(
       containerColor = MaterialTheme.colorScheme.primaryContainer
     ),
     modifier = modifier,
-    navigationIcon = {
-      if (canNavigateBack) {
-        IconButton(onClick = navigateUp) {
-          Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back button")
-        }
-      }
-    },
     actions = {
       IconButton(onClick = onShareClick) {
         Icon(imageVector = Icons.Default.Send, contentDescription = "Share")
@@ -56,9 +46,7 @@ fun AppBar(
 fun PreviewAppBar() {
   AppTheme {
     AppBar(
-      canNavigateBack = true,
       currentScreen = Screen.Statuses,
-      navigateUp = {},
       modifier = Modifier,
       onShareClick = {}
     )

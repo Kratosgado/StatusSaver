@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.kratosgado.statussaver.domain.Status
 import com.kratosgado.statussaver.domain.StatusType
 import com.kratosgado.statussaver.ui.MainScreen
@@ -23,6 +26,7 @@ import com.kratosgado.statussaver.ui.theme.AppTheme
 import com.kratosgado.statussaver.ui.viewmodel.AppViewModel
 import com.kratosgado.statussaver.ui.viewmodel.SettingsViewModel
 import com.kratosgado.statussaver.ui.views.PermissionScreen
+import com.kratosgado.statussaver.ui.views.StatusPager
 import com.kratosgado.statussaver.ui.views.restoreAccessToDirectory
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -42,6 +46,7 @@ class MainActivity : ComponentActivity() {
       val viewModel: AppViewModel = hiltViewModel<AppViewModel>()
       val settingsModel = hiltViewModel<SettingsViewModel>()
       val uiState by viewModel.uiState.collectAsState()
+      val navController = rememberNavController()
 
       AppTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -54,19 +59,38 @@ class MainActivity : ComponentActivity() {
             }, context = context)
           } else {
             restoreAccessToDirectory(context, uiState.statusDirUri!!)
-            MainScreen(
-              statuses = uiState.statuses.values.toList(),
-              saved = uiState.saved.values.toList(),
-              onSaveClick = { status ->
-                viewModel.saveStatus(status)
-                Toast.makeText(context, "File saved to: ${uiState.savedDirUri}", Toast.LENGTH_SHORT)
-                  .show()
-              },
-              onShareClick = this::shareApp,
-              shareStatus = this::shareStatus
-            )
+            NavHost(navController, "main") {
+              composable("main") {
+                MainScreen(
+                  statuses = uiState.statuses.values.toList(),
+                  saved = uiState.saved.values.toList(),
+                  onSaveClick = { status ->
+                    viewModel.saveStatus(status)
+                    Toast.makeText(
+                      context,
+                      "File saved to: ${uiState.savedDirUri}",
+                      Toast.LENGTH_SHORT
+                    )
+                      .show()
+                  },
+                  onShareClick = { shareApp() },
+                  navController = navController
+                )
+              }
+              composable("status/{index}/{isStatus}") {
+                val index = it.arguments?.getInt("index") ?: 0
+                val isStatus = it.arguments?.getBoolean("isStatus") ?: true
+                val statuses = if (isStatus) uiState.statuses else uiState.saved
+                StatusPager(
+                  stats = statuses.values.toList(),
+                  startIndex = index,
+                  onBack = { navController.popBackStack() },
+                  onSaveClick = { stat -> viewModel.saveStatus(stat) },
+                  onShare = { stat -> shareStatus(stat) }
+                )
+              }
+            }
           }
-
           if (uiState.error != null) {
             ErrorDialog(
               message = uiState.error!!,

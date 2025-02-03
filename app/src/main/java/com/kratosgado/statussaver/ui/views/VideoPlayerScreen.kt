@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -37,7 +38,7 @@ fun VideoPlayerScreen(
       .apply {
         setMediaItem(MediaItem.fromUri(videoUri))
         prepare()
-        play()
+//        play()
       }
   }
 
@@ -53,6 +54,7 @@ fun VideoPlayerScreen(
         PlayerView(ctx).apply {
           player = exoPlayer
           useController = true // Show controls
+          resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
         }
       },
       modifier = Modifier.fillMaxSize()
