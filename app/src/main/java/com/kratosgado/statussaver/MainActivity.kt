@@ -1,8 +1,8 @@
 package com.kratosgado.statussaver
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,10 +13,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.ump.ConsentInformation
-import com.google.android.ump.ConsentRequestParameters
-import com.google.android.ump.UserMessagingPlatform
+import com.kratosgado.statussaver.domain.Status
+import com.kratosgado.statussaver.domain.StatusType
 import com.kratosgado.statussaver.ui.MainScreen
 import com.kratosgado.statussaver.ui.components.ErrorDialog
 import com.kratosgado.statussaver.ui.theme.AppTheme
@@ -31,7 +31,7 @@ import java.io.File
 class MainActivity : ComponentActivity() {
   private val adManager by lazy { (application as App).adManager }
   override fun onCreate(savedInstanceState: Bundle?) {
-    requestConsent()
+//    requestConsent()
     super.onCreate(savedInstanceState)
     lifecycle.addObserver(adManager)
     val savedDir = File(
@@ -62,8 +62,8 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(context, "File saved to: ${uiState.savedDirUri}", Toast.LENGTH_SHORT)
                   .show()
               },
-              onShareClick = { /* Handle share */ },
-              onSendClick = { /* Handle send */ }
+              onShareClick = this::shareApp,
+              shareStatus = this::shareStatus
             )
           }
 
@@ -83,34 +83,33 @@ class MainActivity : ComponentActivity() {
     adManager.loadAd()
   }
 
-  // Add to MainActivity.onCreate()
-  private fun requestConsent() {
-    val params = ConsentRequestParameters.Builder().build()
-    val consentInformation = UserMessagingPlatform.getConsentInformation(this)
-
-    consentInformation.requestConsentInfoUpdate(
-      this,
-      params,
-      {
-        if (consentInformation.isConsentFormAvailable) {
-          loadConsentForm()
-        }
-      },
-      { Log.e("AdMob", "Consent info update failed: ${it.message}") }
-    )
+  private fun shareApp() {
+    val shareText = "Check out this awesome status saver app!\n" +
+        "https://play.google.com/store/apps/details?id=$packageName"
+    val shareIntent = Intent().apply {
+      action = Intent.ACTION_SEND
+      putExtra(Intent.EXTRA_TEXT, shareText)
+      type = "text/plain"
+    }
+    startActivity(Intent.createChooser(shareIntent, "Share to friends"))
   }
 
-  private fun loadConsentForm() {
-    UserMessagingPlatform.loadConsentForm(
+  private fun shareStatus(status: Status) {
+    val file = File(status.uri.path ?: return)
+    val contentUri = FileProvider.getUriForFile(
       this,
-      { form ->
-        if (UserMessagingPlatform.getConsentInformation(this).consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
-          form.show(this) {
-            // Handle dismissal
-          }
-        }
-      },
-      { Log.e("AdMob", "Consent form load failed: ${it.message}") }
+      "${packageName}.fileprovider",
+      file
     )
+    val shareIntent = Intent().apply {
+      action = Intent.ACTION_SEND
+      putExtra(Intent.EXTRA_STREAM, contentUri)
+      type = when (status.type) {
+        StatusType.Video -> "video/*"
+        StatusType.Image -> "image/*"
+      }
+      addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    startActivity(Intent.createChooser(shareIntent, "Share via"))
   }
 }

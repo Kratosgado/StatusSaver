@@ -25,6 +25,7 @@ fun AppBar(
   canNavigateBack: Boolean = false,
   currentScreen: Screen,
   navigateUp: () -> Unit,
+  onShareClick: () -> Unit
 ) {
   TopAppBar(
     title = { Text(currentScreen.title) },
@@ -40,10 +41,10 @@ fun AppBar(
       }
     },
     actions = {
-      IconButton(onClick = { /*TODO*/ }) {
+      IconButton(onClick = onShareClick) {
         Icon(imageVector = Icons.Default.Send, contentDescription = "Share")
       }
-      IconButton(onClick = { /*TODO*/ }) {
+      IconButton(onClick = onShareClick) {
         Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
       }
     }
@@ -58,7 +59,8 @@ fun PreviewAppBar() {
       canNavigateBack = true,
       currentScreen = Screen.Statuses,
       navigateUp = {},
-      modifier = Modifier
+      modifier = Modifier,
+      onShareClick = {}
     )
   }
 }

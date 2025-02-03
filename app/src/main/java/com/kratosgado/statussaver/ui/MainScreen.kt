@@ -41,7 +41,7 @@ fun MainScreen(
   saved: List<Status>,
   onSaveClick: (Status) -> Unit,
   onShareClick: () -> Unit,
-  onSendClick: () -> Unit
+  shareStatus: (Status) -> Unit
 ) {
   var selectedDestination by remember { mutableStateOf<Screen>(Screen.Statuses) }
   var index by remember { mutableStateOf(Pair(0, true)) }
@@ -52,6 +52,7 @@ fun MainScreen(
       AppBar(
         currentScreen = selectedDestination,
         canNavigateBack = selectedDestination == Screen.View,
+        onShareClick = onShareClick,
         navigateUp = { selectedDestination = if (index.second) Screen.Statuses else Screen.Saved })
     },
     bottomBar = {
