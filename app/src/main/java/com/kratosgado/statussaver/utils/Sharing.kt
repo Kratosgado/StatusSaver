@@ -3,6 +3,7 @@ package com.kratosgado.statussaver.utils
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -13,21 +14,10 @@ import java.io.File
 import java.io.FileOutputStream
 
 // Add this to your MainActivity or ViewModel
-fun repostStatus(context: Context, savedDir: File, status: Status) {
+fun repostStatus(context: Context, savedDir: File, status: Status, repost: Boolean = false) {
   try {
-    // WhatsApp package names
-    val whatsappPackage = "com.whatsapp"
-    val whatsappBusinessPackage = "com.whatsapp.w4b"
 
-    // Check if WhatsApp is installed
-    val packageManager = context.packageManager
-    val whatsappInstalled = isPackageInstalled(whatsappPackage, packageManager)
-    val whatsappBusinessInstalled = isPackageInstalled(whatsappBusinessPackage, packageManager)
 
-    if (!whatsappInstalled && !whatsappBusinessInstalled) {
-      Toast.makeText(context, "WhatsApp not installed", Toast.LENGTH_SHORT).show()
-      return
-    }
     val resolver = context.contentResolver
     val inputStream = resolver.openInputStream(status.uri)
     val file = DocumentFile.fromSingleUri(context, status.uri)
@@ -46,25 +36,12 @@ fun repostStatus(context: Context, savedDir: File, status: Status) {
       "${context.packageName}.fileprovider",
       newFile
     )
-
-    // Create intent
-    val intent = Intent().apply {
-      action = Intent.ACTION_SEND
-      putExtra(Intent.EXTRA_STREAM, contentUri)
-      type = when (status.type) {
-        StatusType.Image -> "image/*"
-        StatusType.Video -> "video/*"
-      }
-      addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-      // Try regular WhatsApp first, then WhatsApp Business
-      when {
-        whatsappInstalled -> setPackage(whatsappPackage)
-        whatsappBusinessInstalled -> setPackage(whatsappBusinessPackage)
-      }
+    if (repost) {
+      repost(context, contentUri, status.type)
+    } else {
+      shareStatus(context, contentUri, status.type)
     }
 
-    context.startActivity(intent)
     if (delete) newFile.delete()
   } catch (e: Exception) {
     Log.d("Reposting", e.message ?: e.toString())
@@ -79,4 +56,51 @@ private fun isPackageInstalled(packageName: String, packageManager: PackageManag
   } catch (e: PackageManager.NameNotFoundException) {
     false
   }
+}
+
+private fun repost(context: Context, uri: Uri, t: StatusType) {
+  // WhatsApp package names
+  val whatsappPackage = "com.whatsapp"
+  val whatsappBusinessPackage = "com.whatsapp.w4b"
+// Check if WhatsApp is installed
+  val packageManager = context.packageManager
+  val whatsappInstalled = isPackageInstalled(whatsappPackage, packageManager)
+  val whatsappBusinessInstalled = isPackageInstalled(whatsappBusinessPackage, packageManager)
+
+  if (!whatsappInstalled && !whatsappBusinessInstalled) {
+    Toast.makeText(context, "WhatsApp not installed", Toast.LENGTH_SHORT).show()
+    return
+  }
+  // Create intent
+  val intent = Intent().apply {
+    action = Intent.ACTION_SEND
+    putExtra(Intent.EXTRA_STREAM, uri)
+    type = when (t) {
+      StatusType.Image -> "image/*"
+      StatusType.Video -> "video/*"
+    }
+    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+    // Try regular WhatsApp first, then WhatsApp Business
+    when {
+      whatsappInstalled -> setPackage(whatsappPackage)
+      whatsappBusinessInstalled -> setPackage(whatsappBusinessPackage)
+    }
+  }
+
+  context.startActivity(intent)
+}
+
+private fun shareStatus(context: Context, uri: Uri, t: StatusType) {
+
+  val shareIntent = Intent().apply {
+    action = Intent.ACTION_SEND
+    putExtra(Intent.EXTRA_STREAM, uri)
+    type = when (t) {
+      StatusType.Video -> "video/*"
+      StatusType.Image -> "image/*"
+    }
+    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+  }
+  context.startActivity(Intent.createChooser(shareIntent, "Share via"))
 }

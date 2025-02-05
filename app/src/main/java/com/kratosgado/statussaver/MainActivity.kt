@@ -14,15 +14,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.kratosgado.statussaver.domain.Status
-import com.kratosgado.statussaver.domain.StatusType
 import com.kratosgado.statussaver.ui.MainScreen
 import com.kratosgado.statussaver.ui.components.ErrorDialog
 import com.kratosgado.statussaver.ui.theme.AppTheme
@@ -99,8 +96,8 @@ class MainActivity : ComponentActivity() {
                   startIndex = index,
                   onBack = { navController.popBackStack() },
                   onSaveClick = { stat -> viewModel.saveStatus(stat) },
-                  onShare = { stat -> shareStatus(stat) },
-                  onRepost = { stat -> repostStatus(context, uiState.savedDirUri!!, stat) }
+                  onShare = { stat -> repostStatus(context, uiState.savedDirUri!!, stat) },
+                  onRepost = { stat -> repostStatus(context, uiState.savedDirUri!!, stat, true) }
                 )
               }
             }
@@ -121,6 +118,12 @@ class MainActivity : ComponentActivity() {
     adManager.loadAd()
   }
 
+  override fun onStart() {
+    super.onStart()
+    adManager.onMoveToForeground()
+  }
+
+
   private fun shareApp() {
     val shareText = "Check out this awesome status saver app!\n" +
         "https://play.google.com/store/apps/details?id=$packageName"
@@ -132,22 +135,4 @@ class MainActivity : ComponentActivity() {
     startActivity(Intent.createChooser(shareIntent, "Share to friends"))
   }
 
-  private fun shareStatus(status: Status) {
-    val file = File(status.uri.path ?: return)
-    val contentUri = FileProvider.getUriForFile(
-      this,
-      "${packageName}.fileprovider",
-      file
-    )
-    val shareIntent = Intent().apply {
-      action = Intent.ACTION_SEND
-      putExtra(Intent.EXTRA_STREAM, contentUri)
-      type = when (status.type) {
-        StatusType.Video -> "video/*"
-        StatusType.Image -> "image/*"
-      }
-      addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-    startActivity(Intent.createChooser(shareIntent, "Share via"))
-  }
 }
