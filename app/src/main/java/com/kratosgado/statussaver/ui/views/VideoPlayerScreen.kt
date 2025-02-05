@@ -3,17 +3,11 @@ package com.kratosgado.statussaver.ui.views
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -59,17 +53,6 @@ fun VideoPlayerScreen(
       },
       modifier = Modifier.fillMaxSize()
     )
-
-    // Back button (optional)
-    IconButton(
-      onClick = onBackPressed,
-      modifier = Modifier.padding(16.dp)
-    ) {
-      Icon(
-        imageVector = Icons.Default.ArrowBack,
-        contentDescription = "Back"
-      )
-    }
   }
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->

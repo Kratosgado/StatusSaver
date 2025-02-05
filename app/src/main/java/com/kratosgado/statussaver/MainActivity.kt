@@ -3,6 +3,7 @@ package com.kratosgado.statussaver
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.kratosgado.statussaver.domain.Status
 import com.kratosgado.statussaver.domain.StatusType
 import com.kratosgado.statussaver.ui.MainScreen
@@ -74,19 +77,29 @@ class MainActivity : ComponentActivity() {
                       .show()
                   },
                   onShareClick = { shareApp() },
-                  navController = navController
+                  onItemClick = {
+                    Log.d("Navigation", "to ${it.first}/${it.second}")
+                    navController.navigate("status/${it.first}/${it.second}")
+                  },
                 )
               }
-              composable("status/{index}/{isStatus}") {
+              composable(
+                "status/{index}/{isStatus}",
+                arguments = listOf(
+                  navArgument("index") { type = NavType.IntType },
+                  navArgument("isStatus") { type = NavType.BoolType })
+              ) {
                 val index = it.arguments?.getInt("index") ?: 0
                 val isStatus = it.arguments?.getBoolean("isStatus") ?: true
                 val statuses = if (isStatus) uiState.statuses else uiState.saved
+                Log.d("Navigation", "to $index/$isStatus")
                 StatusPager(
                   stats = statuses.values.toList(),
                   startIndex = index,
                   onBack = { navController.popBackStack() },
                   onSaveClick = { stat -> viewModel.saveStatus(stat) },
-                  onShare = { stat -> shareStatus(stat) }
+                  onShare = { stat -> shareStatus(stat) },
+                  onRepost = {}
                 )
               }
             }

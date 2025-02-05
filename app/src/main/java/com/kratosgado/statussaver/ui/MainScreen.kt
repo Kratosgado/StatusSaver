@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
 import com.kratosgado.statussaver.domain.Status
 import com.kratosgado.statussaver.ui.components.AppBar
 import com.kratosgado.statussaver.ui.views.SavedScreen
@@ -38,7 +37,7 @@ fun MainScreen(
   saved: List<Status>,
   onSaveClick: (Status) -> Unit,
   onShareClick: () -> Unit,
-  navController: NavController,
+  onItemClick: (Pair<Int, Boolean>) -> Unit,
 ) {
   var selectedDestination by remember { mutableStateOf<Screen>(Screen.Statuses) }
   val destinations = listOf(Screen.Statuses, Screen.Saved, Screen.Settings)
@@ -67,9 +66,7 @@ fun MainScreen(
       Screen.Statuses -> StatusGrid(
         statuses = statuses,
         onSaveClick = onSaveClick,
-        onItemClick = {
-          navController.navigate("status/${it.first}/${it.second}")
-        },
+        onItemClick = onItemClick,
         modifier = Modifier
           .fillMaxSize()
           .padding(innerPadding)
@@ -79,9 +76,7 @@ fun MainScreen(
         modifier = Modifier.padding(innerPadding),
         statuses = saved,
         onSaveClick = onSaveClick,
-        onItemClick = {
-          navController.navigate("status/${it.first}/${it.second}")
-        }
+        onItemClick = onItemClick
       )
 
       Screen.Settings -> SettingsScreen(modifier = Modifier.padding(innerPadding))
