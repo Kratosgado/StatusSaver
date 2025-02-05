@@ -31,6 +31,7 @@ import com.kratosgado.statussaver.ui.viewmodel.SettingsViewModel
 import com.kratosgado.statussaver.ui.views.PermissionScreen
 import com.kratosgado.statussaver.ui.views.StatusPager
 import com.kratosgado.statussaver.ui.views.restoreAccessToDirectory
+import com.kratosgado.statussaver.utils.repostStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -99,7 +100,7 @@ class MainActivity : ComponentActivity() {
                   onBack = { navController.popBackStack() },
                   onSaveClick = { stat -> viewModel.saveStatus(stat) },
                   onShare = { stat -> shareStatus(stat) },
-                  onRepost = {}
+                  onRepost = { stat -> repostStatus(context, uiState.savedDirUri!!, stat) }
                 )
               }
             }

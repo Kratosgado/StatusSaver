@@ -14,7 +14,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -72,7 +72,7 @@ fun StatusItem(
     ) {
       Icon(
         imageVector = Icons.Default.CheckCircle,
-        tint = if (status.isSaved) Green else LocalContentColor.current,
+        tint = if (status.isSaved) Color.Cyan else LocalContentColor.current,
         contentDescription = "Save"
       )
     }

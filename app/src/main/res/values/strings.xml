@@ -17,4 +17,7 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="app_version">App Version</string>
     <string name="app_name">Status Saver</string>
+    <string name="repost">Repost</string>
+    <string name="share">Share</string>
+    <string name="save">Save</string>
 </resources>
