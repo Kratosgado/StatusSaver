@@ -23,7 +23,7 @@ class OpenAdManager(private val context: Context) : LifecycleObserver {
 
   companion object {
     private const val LOG_TAG = "AppOpenAdManager"
-    private const val AD_UNIT_ID = "ca-app-pub-3940256099942544/9257395921"
+    private const val AD_UNIT_ID = "ca-app-pub-7728407038529891/4198597477"
   }
 
   fun loadAd() {
