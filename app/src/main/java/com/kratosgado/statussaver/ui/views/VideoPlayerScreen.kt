@@ -21,7 +21,6 @@ import androidx.media3.ui.PlayerView
 @Composable
 fun VideoPlayerScreen(
   videoUri: Uri,
-  onBackPressed: () -> Unit
 ) {
   val context = LocalContext.current
   val lifecycleOwner = LocalLifecycleOwner.current

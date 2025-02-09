@@ -3,7 +3,6 @@ package com.kratosgado.statussaver
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -76,7 +75,6 @@ class MainActivity : ComponentActivity() {
                   },
                   onShareClick = { shareApp() },
                   onItemClick = {
-                    Log.d("Navigation", "to ${it.first}/${it.second}")
                     navController.navigate("status/${it.first}/${it.second}")
                   },
                 )
@@ -90,7 +88,6 @@ class MainActivity : ComponentActivity() {
                 val index = it.arguments?.getInt("index") ?: 0
                 val isStatus = it.arguments?.getBoolean("isStatus") ?: true
                 val statuses = if (isStatus) uiState.statuses else uiState.saved
-                Log.d("Navigation", "to $index/$isStatus")
                 StatusPager(
                   stats = statuses.values.toList(),
                   startIndex = index,

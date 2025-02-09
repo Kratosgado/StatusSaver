@@ -69,6 +69,16 @@ class StatusRepository(private val context: Context) {
     }
   }
 
+  suspend fun deleteStat(uri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
+    try {
+      val file = DocumentFile.fromSingleUri(context, uri)
+      file?.delete()
+      true
+    } catch (e: IOException) {
+      false
+    }
+  }
+
   private fun isImage(file: DocumentFile): Boolean {
     return file.type?.startsWith("image/") == true || file.name?.endsWith(".jpg") == true
   }

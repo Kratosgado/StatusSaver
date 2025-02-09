@@ -1,6 +1,6 @@
 package com.kratosgado.statussaver.ui.views
 
-import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,10 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -47,13 +43,12 @@ fun StatusPager(
   onShare: (Status) -> Unit = {},
   onRepost: (Status) -> Unit = {}
 ) {
-  var currentVideoUri by remember { mutableStateOf<Uri?>(null) }
 
   val pagerState = rememberPagerState(
     initialPage = startIndex,
     initialPageOffsetFraction = 0f,
-    pageCount = { stats.size }
-  )
+  ) { stats.size }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -109,8 +104,13 @@ fun StatusPager(
         .padding(innerPadding)
 //        .background(Color.Black)
     ) {
-      HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+      HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxSize()
+      ) { page ->
         val stat = stats[page]
+        Log.d("statuspager", stat.name)
+        Log.d("statuspager", "page $page")
         when (stat.type) {
           StatusType.Image -> AsyncImage(
             model = stat.uri,
@@ -121,7 +121,6 @@ fun StatusPager(
 
           StatusType.Video -> VideoPlayerScreen(
             videoUri = stat.uri,
-            onBackPressed = { currentVideoUri = null }
           )
         }
       }
