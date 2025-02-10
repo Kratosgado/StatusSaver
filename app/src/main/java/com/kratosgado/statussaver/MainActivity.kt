@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     lifecycle.addObserver(adManager)
     val savedDir = File(
-      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
       "StatusSaver"
     ).apply { mkdir() }
     setContent {

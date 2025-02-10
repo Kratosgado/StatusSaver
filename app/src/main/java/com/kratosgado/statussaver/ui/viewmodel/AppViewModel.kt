@@ -34,7 +34,7 @@ class AppViewModel @Inject constructor(
       settingsManager.statusLocation.collect {
         it?.let {
           val savedDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "StatusSaver"
           )
           setSaveDir(it, savedDir)
@@ -68,23 +68,29 @@ class AppViewModel @Inject constructor(
   }
 
   fun saveStatus(status: Status) {
+    var message = ""
     viewModelScope.launch {
       val stats = _uiState.value.statuses.toMutableMap()
       val saved = _uiState.value.saved.toMutableMap()
-      var success = false
+      val success: Boolean
       if (status.isSaved) {
         success = !repository.deleteStat(status.uri, _uiState.value.savedDirUri!!)
+        saved.remove(status.name)
+        "File deleted successfully".also { message = it }
       } else {
         success = repository.saveStatus(status.uri, _uiState.value.savedDirUri!!)
+        saved[status.name] = status.copy(isSaved = success)
         if (!success) {
           _uiState.value = _uiState.value.copy(
             error = "Failed to save status"
           )
           return@launch
         }
+        "File saved to ${_uiState.value.savedDirUri}".also { message = it }
       }
-      stats[status.name] = status.copy(isSaved = success)
-      saved[status.name] = status.copy(isSaved = success)
+      if (stats.containsKey(status.name)) {
+        stats[status.name] = status.copy(isSaved = success)
+      }
       _uiState.value = _uiState.value.copy(
         statuses = stats,
         saved = saved

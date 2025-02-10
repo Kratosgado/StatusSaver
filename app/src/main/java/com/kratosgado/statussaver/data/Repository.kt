@@ -1,6 +1,7 @@
 package com.kratosgado.statussaver.data
 
 import android.content.Context
+import android.media.MediaScannerConnection
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.kratosgado.statussaver.domain.Status
@@ -63,6 +64,14 @@ class StatusRepository(private val context: Context) {
         inputStream?.copyTo(it)
         inputStream?.close()
       }
+      // Scan the new file so it appears in gallery
+      MediaScannerConnection.scanFile(
+        context,
+        arrayOf(newFile.absolutePath),
+        null
+      ) { path, uri ->
+        println("Scanned $path: $uri")
+      }
       true
     } catch (e: IOException) {
       false
@@ -72,9 +81,22 @@ class StatusRepository(private val context: Context) {
   suspend fun deleteStat(uri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
     try {
       val file = DocumentFile.fromSingleUri(context, uri)
-      file?.delete()
+      val fileName = file?.name
+
+      val publicFile = File(savedDir, fileName ?: return@withContext false)
+      if (publicFile.exists()) {
+        publicFile.delete()
+        // Notify media scanner about deletion
+        MediaScannerConnection.scanFile(
+          context,
+          arrayOf(publicFile.absolutePath),
+          null,
+          null
+        )
+      }
       true
     } catch (e: IOException) {
+      e.printStackTrace()
       false
     }
   }

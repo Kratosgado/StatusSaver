@@ -1,6 +1,7 @@
 package com.kratosgado.statussaver.ui.views
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import coil.compose.AsyncImage
 import com.kratosgado.statussaver.R
 import com.kratosgado.statussaver.domain.Status
 import com.kratosgado.statussaver.domain.StatusType
+import com.kratosgado.statussaver.ui.components.VideoPlayer
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,12 +43,11 @@ fun StatusPager(
   onSaveClick: (Status) -> Unit,
   onBack: () -> Unit = {},
   onShare: (Status) -> Unit = {},
-  onRepost: (Status) -> Unit = {}
+  onRepost: (Status) -> Unit = {},
 ) {
 
   val pagerState = rememberPagerState(
     initialPage = startIndex,
-    initialPageOffsetFraction = 0f,
   ) { stats.size }
 
   Scaffold(
@@ -102,7 +103,7 @@ fun StatusPager(
     Box(
       modifier = Modifier
         .padding(innerPadding)
-//        .background(Color.Black)
+        .background(Color.Black)
     ) {
       HorizontalPager(
         state = pagerState,
@@ -119,9 +120,7 @@ fun StatusPager(
             modifier = Modifier.fillMaxSize()
           )
 
-          StatusType.Video -> VideoPlayerScreen(
-            videoUri = stat.uri,
-          )
+          StatusType.Video -> VideoPlayer(stat.uri)
         }
       }
     }
