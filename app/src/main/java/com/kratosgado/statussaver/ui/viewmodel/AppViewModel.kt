@@ -1,8 +1,7 @@
 package com.kratosgado.statussaver.ui.viewmodel
 
 import android.net.Uri
-import android.os.Environment
-import androidx.lifecycle.SavedStateHandle
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kratosgado.statussaver.data.SettingsManager
@@ -12,12 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-  val handle: SavedStateHandle,
   private val repository: StatusRepository,
   private val settingsManager: SettingsManager
 ) : ViewModel() {
@@ -25,27 +22,21 @@ class AppViewModel @Inject constructor(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  init {
-    loadSettings()
-  }
-
-  private fun loadSettings() {
+  fun loadSettings(onComplete: () -> Unit) {
     viewModelScope.launch {
       settingsManager.statusLocation.collect {
         it?.let {
-          val savedDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            "StatusSaver"
-          )
-          setSaveDir(it, savedDir)
-          loadStatuses()
+          settingsManager.saveLocation.collect { saveUri ->
+            _uiState.value =
+              _uiState.value.copy(statusDirUri = it, savedDirUri = saveUri!!.toFile())
+            loadStatuses(onComplete)
+          }
         }
       }
     }
   }
 
-  fun loadStatuses() {
-    _uiState.value = _uiState.value.copy(isLoading = true)
+  fun loadStatuses(onComplete: () -> Unit) {
     viewModelScope.launch {
       try {
         val (statuses, saved) = repository.loadStatuses(
@@ -55,13 +46,12 @@ class AppViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
           statuses = statuses,
           saved = saved,
-          isLoading = false,
           error = null
         )
+        onComplete()
       } catch (e: Exception) {
         _uiState.value = _uiState.value.copy(
           error = "Failed to load statuses: ${e.message}",
-          isLoading = false
         )
       }
     }
@@ -98,8 +88,8 @@ class AppViewModel @Inject constructor(
     }
   }
 
-  fun setSaveDir(uri: Uri, saveDirUri: File) {
-    _uiState.value = _uiState.value.copy(statusDirUri = uri, savedDirUri = saveDirUri)
+  fun setStatusDir(uri: Uri) {
+    _uiState.value = _uiState.value.copy(statusDirUri = uri)
   }
 
   fun clearError() {

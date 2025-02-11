@@ -8,7 +8,6 @@ import java.io.File
 data class AppUiState(
   val statuses: Map<String, Status> = emptyMap(),
   val saved: Map<String, Status> = emptyMap(),
-  val isLoading: Boolean = true,
   val error: String? = null,
   val statusDirUri: Uri? = null,
   val savedDirUri: File? = null,

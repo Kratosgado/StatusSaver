@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(message: String) {
   Box(
     modifier = Modifier.fillMaxSize(),
     contentAlignment = androidx.compose.ui.Alignment.Center
@@ -21,7 +21,7 @@ fun LoadingScreen() {
     Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
       CircularProgressIndicator()
       Spacer(modifier = Modifier.height(16.dp))
-      Text(text = "Loading statuses...", style = MaterialTheme.typography.bodyMedium)
+      Text(text = message, style = MaterialTheme.typography.bodyMedium)
     }
   }
 }

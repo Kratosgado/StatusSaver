@@ -70,7 +70,7 @@ dependencies {
   implementation(libs.androidx.hilt.navigation.compose) // di
   implementation(libs.play.services.ads)
   implementation(libs.play.services.ads.lite)
-
+  implementation(libs.androidx.material) // for refresh
   // For GDPR compliance (required in EU)
   implementation(libs.user.messaging.platform)
   implementation(libs.androidx.lifecycle.process)

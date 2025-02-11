@@ -95,6 +95,13 @@ class StatusRepository(private val context: Context) {
         )
       }
       true
+      // Delete from app directory
+//      val appFile = File(savedDir, fileName)
+//      if (appFile.exists()) {
+//        appFile.delete()
+//      }
+//
+//      file.delete()
     } catch (e: IOException) {
       e.printStackTrace()
       false

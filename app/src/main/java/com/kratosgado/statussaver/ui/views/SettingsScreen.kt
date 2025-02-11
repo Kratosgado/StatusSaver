@@ -1,6 +1,8 @@
 package com.kratosgado.statussaver.ui.views
 
+import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kratosgado.statussaver.R
+import com.kratosgado.statussaver.ui.components.PermissionDialog
 import com.kratosgado.statussaver.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +38,31 @@ fun SettingsScreen(
   viewModel: SettingsViewModel = hiltViewModel()
 ) {
   val settingsState by viewModel.settingsState.collectAsState()
+  val permissionState by viewModel.permissionState.collectAsState()
+
+  val permissionLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted ->
+    viewModel.onPermissionResult(
+      Manifest.permission.READ_EXTERNAL_STORAGE,
+      isGranted
+    )
+  }
+
+  val notificationPermissionLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted ->
+    viewModel.onPermissionResult(
+      Manifest.permission.POST_NOTIFICATIONS,
+      isGranted
+    )
+  }
+
+  val manageStorageLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.StartActivityForResult()
+  ) {
+    viewModel.onManageStoragePermissionResult()
+  }
   val directoryLauncher = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocumentTree()
   ) { uri: Uri? ->
@@ -105,6 +133,28 @@ fun SettingsScreen(
       )
     }
   }
+  PermissionDialog(
+    showDialog = permissionState.shouldShowPermissionDialog,
+    hasStoragePermission = permissionState.hasStoragePermission,
+    hasNotificationPermission = permissionState.hasNotificationPermission,
+    hasManageStoragePermission = permissionState.hasManageStoragePermission,
+    onDismiss = viewModel::dismissPermissionDialog,
+    onRequestStoragePermission = {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        manageStorageLauncher.launch(viewModel.getManageStorageIntent())
+      } else {
+        permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+      }
+    },
+    onRequestNotificationPermission = {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
+    },
+    onRequestManageStorage = {
+      manageStorageLauncher.launch(viewModel.getManageStorageIntent())
+    }
+  )
 }
 
 @Composable

@@ -20,4 +20,10 @@
     <string name="repost">Repost</string>
     <string name="share">Share</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="permissions_required">Permission Required</string>
+    <string name="storage_permission_rationale">Storage Permission Rationale</string>
+    <string name="notification_permission_rationale">Notification Permission Rationale</string>
+    <string name="manage_storage_permission_rationale">Manage Storage Permission Rationale</string>
 </resources>
