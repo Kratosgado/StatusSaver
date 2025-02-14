@@ -7,15 +7,15 @@ plugins {
 
 
 android {
-  namespace = "com.kratosgado.statussaver"
+  namespace = "com.kratosgado.statusaver"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "com.kratosgado.statussaver"
+    applicationId = "com.kratosgado.statusaver"
     minSdk = 24
     targetSdk = 35
-    versionCode = 3
-    versionName = "1.1-alpha"
+    versionCode = 4
+    versionName = "1.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables {
@@ -61,8 +61,6 @@ dependencies {
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.ui)
   implementation(libs.hilt.android)
-//  implementation(libs.androidx.datastore.core.android) // di
-//  implementation(libs.androidx.datastore.rxjava3)
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.datastore.preferences.core)
   implementation(libs.androidx.foundation.layout.android)
@@ -70,9 +68,6 @@ dependencies {
   implementation(libs.androidx.hilt.navigation.compose) // di
   implementation(libs.play.services.ads)
   implementation(libs.play.services.ads.lite)
-  implementation(libs.androidx.material) // for refresh
-  // For GDPR compliance (required in EU)
-  implementation(libs.user.messaging.platform)
   implementation(libs.androidx.lifecycle.process)
 
 

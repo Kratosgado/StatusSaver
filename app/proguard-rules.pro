@@ -1,5 +1,5 @@
 
--keep class com.kratosgado.statussaver.ui.** { *; }
+-keep class com.kratosgado.statusaver.ui.** { *; }
 -keep @androidx.compose.material3.ExperimentalMaterial3Api class *
 -keep class * extends androidx.compose.ui.graphics.vector.ImageVector
 # Keep ViewModels
@@ -24,7 +24,7 @@
 # hide the original source file name.
 -renamesourcefileattribute SourceFile
 # ========= Hilt =========
--keep class com.kratosgado.statussaver.Hilt_* { *; }
+-keep class com.kratosgado.statusaver.Hilt_* { *; }
 -keep @dagger.hilt.android.AndroidEntryPoint class * { *; }
 -keepclassmembers class * {
     @dagger.hilt.* *;
