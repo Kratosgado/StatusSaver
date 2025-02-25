@@ -1,11 +1,9 @@
 [versions]
-accompanistPermissionsVersion = "0.28.0"
 agp = "8.7.1"
 coilComposeVersion = "2.4.0"
 coilVideoVersion = "2.4.0"
 datastorePreferencesCoreVersion = "1.1.2"
 datastorePreferencesVersion = "1.1.2"
-datastoreRxjava3Version = "1.1.2"
 hiltAndroidVersion = "2.51.1"
 hiltAndroidCompilerVersion = "2.51.1"
 hiltNavigationComposeVersion = "1.2.0"
@@ -19,7 +17,6 @@ lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2023.08.00"
 lifecycleViewmodelCompose = "2.6.2"
-materialVersion = "1.7.7"
 media3ExoplayerVersion = "1.2.0"
 media3UiVersion = "1.2.0"
 navigationCompose = "2.8.1"
@@ -27,29 +24,22 @@ playServicesAdsLiteVersion = "23.6.0"
 playServicesAdsVersion = "23.6.0"
 uiTextGoogleFonts = "1.7.4"
 documentfile = "1.0.1"
-userMessagingPlatformVersion = "3.1.0"
 workRuntimeKtxVersion = "2.7.1"
-datastoreCoreAndroidVersion = "1.1.2"
 foundationLayoutAndroidVersion = "1.7.2"
 
 [libraries]
-accompanist-pager = { module = "com.google.accompanist:accompanist-pager" }
-accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesVersion" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCoreVersion" }
-androidx-datastore-rxjava3 = { module = "androidx.datastore:datastore-rxjava3", version.ref = "datastoreRxjava3Version" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleProcessVersion" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
-androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3ExoplayerVersion" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3UiVersion" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 coil-video = { module = "io.coil-kt:coil-video", version.ref = "coilVideoVersion" }
-google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissionsVersion" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -67,11 +57,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
-androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroidVersion" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAdsVersion" }
 play-services-ads-lite = { module = "com.google.android.gms:play-services-ads-lite", version.ref = "playServicesAdsLiteVersion" }
-user-messaging-platform = { module = "com.google.android.ump:user-messaging-platform", version.ref = "userMessagingPlatformVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

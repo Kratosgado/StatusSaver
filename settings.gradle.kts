@@ -19,5 +19,5 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Status Saver"
+rootProject.name = "WhatsApp Status Saver"
 include(":app")
