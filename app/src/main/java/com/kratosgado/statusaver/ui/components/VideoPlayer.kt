@@ -5,10 +5,14 @@ import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -20,6 +24,8 @@ import androidx.media3.ui.PlayerView
 @Composable
 fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
   val context = LocalContext.current
+  val lifecycleOwner = LocalLifecycleOwner.current
+  var isPlaying = remember { mutableStateOf(false) }
 
   val exoPlayer = remember {
     ExoPlayer.Builder(context).build().apply {
@@ -30,8 +36,26 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
     }
   }
 
-  DisposableEffect(Unit) {
-    onDispose { exoPlayer.release() }
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, e ->
+      when (e) {
+        Lifecycle.Event.ON_PAUSE -> {
+          isPlaying.value = exoPlayer.isPlaying
+          exoPlayer.pause()
+        }
+
+        Lifecycle.Event.ON_RESUME -> {
+          if (isPlaying.value) exoPlayer.play()
+        }
+
+        else -> {}
+      }
+    }
+    lifecycleOwner.lifecycle.addObserver(observer)
+    onDispose {
+      exoPlayer.release()
+      lifecycleOwner.lifecycle.removeObserver(observer)
+    }
   }
 
   AndroidView(
