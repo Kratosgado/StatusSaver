@@ -2,13 +2,13 @@ package com.kratosgado.statusaver
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -44,23 +44,17 @@ class MainActivity : ComponentActivity() {
       val uiState by viewModel.uiState.collectAsState()
       val navController = rememberNavController()
       val isLoading by settingsModel.isLoading.collectAsState()
-      val hasCheckedSettings by settingsModel.hasCheckedSettings.collectAsState()
 
       AppTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           val context = LocalContext.current
           when {
             isLoading -> {
-              viewModel.loadSettings {
-                settingsModel.ready()
-              }
+              viewModel.loadSettings()
               LoadingScreen("Loading ...")
             }
 
-            !hasCheckedSettings -> {
-              LaunchedEffect(Unit) {
-                settingsModel.checkAndRequestPermissions()
-              }
+            uiState.statusDirUri != null && uiState.statuses.isEmpty() -> {
               LoadingScreen("Retrieving Stats")
             }
 
@@ -68,9 +62,7 @@ class MainActivity : ComponentActivity() {
               PermissionScreen({ uri ->
                 settingsModel.setStatusLocation(uri)
                 viewModel.setStatusDir(uri)
-                viewModel.loadStatuses {
-                  settingsModel.ready()
-                }
+                viewModel.loadStatuses()
               }, context = context)
             }
 
@@ -110,8 +102,8 @@ class MainActivity : ComponentActivity() {
                     startIndex = index,
                     onBack = { navController.popBackStack() },
                     onSaveClick = { stat -> viewModel.saveStatus(stat) },
-                    onShare = { stat -> repostStatus(context, uiState.savedDirUri!!, stat) },
-                    onRepost = { stat -> repostStatus(context, uiState.savedDirUri!!, stat, true) }
+                    onShare = { stat -> repostStatus(context, stat) },
+                    onRepost = { stat -> repostStatus(context, stat, true) }
                   )
                 }
               }
@@ -129,25 +121,36 @@ class MainActivity : ComponentActivity() {
   }
 
   override fun onResume() {
-    super.onResume()
+    Log.d(tag, "App resumed")
     adManager.loadAd()
+    super.onResume()
   }
 
   override fun onStart() {
-    super.onStart()
     adManager.onMoveToForeground()
+    super.onStart()
+  }
+
+  override fun onPause() {
+    Log.d(tag, "App paused")
+    super.onPause()
   }
 
 
   private fun shareApp() {
     val shareText = "Check out this awesome status saver app!\n" +
         "https://play.google.com/store/apps/details?id=$packageName"
-    val shareIntent = Intent().apply {
-      action = Intent.ACTION_SEND
-      putExtra(Intent.EXTRA_TEXT, shareText)
-      type = "text/plain"
-    }
-    startActivity(Intent.createChooser(shareIntent, "Share to friends"))
+    Intent.createChooser(
+      Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+      },
+      "Share to friends"
+    ).also { this.startActivity(it) }
   }
 
+  companion object {
+    const val tag = "MainActivity"
+  }
 }

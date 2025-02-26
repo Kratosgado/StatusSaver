@@ -43,9 +43,6 @@ class OpenAdManager(private val context: Context) : LifecycleObserver {
           isLoadingAd = false
           loadTime = Date().time
           Log.d("AdMob", "App Open Ad loaded")
-
-          // Show the ad immediately after loading
-//          currentActivity?.let { showAdIfAvailable(it) }
         }
 
         override fun onAdFailedToLoad(loadAdError: LoadAdError) {

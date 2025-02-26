@@ -40,8 +40,10 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
         player = exoPlayer
         useController = true
         setShowNextButton(false)
-        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
         setShowPreviousButton(false)
+        setShowRewindButton(false)
+        setShowFastForwardButton(false)
+        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
       }
     },
     modifier = modifier.fillMaxSize()

@@ -22,21 +22,21 @@ class AppViewModel @Inject constructor(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  fun loadSettings(onComplete: () -> Unit) {
+  fun loadSettings() {
     viewModelScope.launch {
       settingsManager.statusLocation.collect {
         it?.let {
           settingsManager.saveLocation.collect { saveUri ->
             _uiState.value =
               _uiState.value.copy(statusDirUri = it, savedDirUri = saveUri!!.toFile())
-            loadStatuses(onComplete)
+            loadStatuses()
           }
         }
       }
     }
   }
 
-  fun loadStatuses(onComplete: () -> Unit) {
+  fun loadStatuses() {
     viewModelScope.launch {
       try {
         val (statuses, saved) = repository.loadStatuses(
@@ -48,7 +48,6 @@ class AppViewModel @Inject constructor(
           saved = saved,
           error = null
         )
-        onComplete()
       } catch (e: Exception) {
         _uiState.value = _uiState.value.copy(
           error = "Failed to load statuses: ${e.message}",

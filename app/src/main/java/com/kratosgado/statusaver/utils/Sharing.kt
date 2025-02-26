@@ -4,45 +4,54 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import com.kratosgado.statusaver.domain.Status
 import com.kratosgado.statusaver.domain.StatusType
 import java.io.File
 import java.io.FileOutputStream
 
 // Add this to your MainActivity or ViewModel
-fun repostStatus(context: Context, savedDir: File, status: Status, repost: Boolean = false) {
+fun repostStatus(context: Context, status: Status, repost: Boolean = false) {
   try {
-
-
     val resolver = context.contentResolver
-    val inputStream = resolver.openInputStream(status.uri)
-    val file = DocumentFile.fromSingleUri(context, status.uri)
-    val newFile = File(savedDir, file?.name ?: "default.jpg")
+    val inputStream = resolver.openInputStream(status.uri) ?: run {
+      Toast.makeText(context, "Error opening file", Toast.LENGTH_SHORT).show()
+      return
+    }
+    val mimeType = resolver.getType(status.uri) ?: when (status.type) {
+      StatusType.Image -> "image/jpg"
+      StatusType.Video -> "video/mp4"
+    }
 
-    val delete = !newFile.exists()
-    if (delete)
-      FileOutputStream(newFile).use {
-        inputStream?.copyTo(it)
-        inputStream?.close()
-      }
+    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+
+    val tempFile = File.createTempFile("share_", ".$extension", context.cacheDir)
+    FileOutputStream(tempFile).use {
+      inputStream.copyTo(it)
+    }
 
     // Create URI using FileProvider
     val contentUri = FileProvider.getUriForFile(
       context,
       "${context.packageName}.fileprovider",
-      newFile
+      tempFile
     )
+
+    Log.d("Reposting", "reposting $contentUri")
     if (repost) {
-      repost(context, contentUri, status.type)
+      repost(context, contentUri, mimeType)
     } else {
-      shareStatus(context, contentUri, status.type)
+      shareStatus(context, contentUri, mimeType)
     }
 
-    if (delete) newFile.delete()
+    Handler(Looper.getMainLooper()).postDelayed({
+      if (tempFile.exists()) tempFile.delete()
+    }, 5 * 50 * 1000)
   } catch (e: Exception) {
     Log.d("Reposting", e.message ?: e.toString())
     Toast.makeText(context, "Error sharing to WhatsApp", Toast.LENGTH_SHORT).show()
@@ -58,49 +67,37 @@ private fun isPackageInstalled(packageName: String, packageManager: PackageManag
   }
 }
 
-private fun repost(context: Context, uri: Uri, t: StatusType) {
-  // WhatsApp package names
-  val whatsappPackage = "com.whatsapp"
-  val whatsappBusinessPackage = "com.whatsapp.w4b"
-// Check if WhatsApp is installed
+private fun repost(context: Context, uri: Uri, mimeType: String) {
   val packageManager = context.packageManager
-  val whatsappInstalled = isPackageInstalled(whatsappPackage, packageManager)
-  val whatsappBusinessInstalled = isPackageInstalled(whatsappBusinessPackage, packageManager)
+  val whatsappPackage = when {
+    isPackageInstalled("com.whatsapp", packageManager) -> "com.whatsapp"
+    isPackageInstalled("com.whatsapp.w4b", packageManager) -> "com.whatsapp.w4b"
+    else -> null
+  }
 
-  if (!whatsappInstalled && !whatsappBusinessInstalled) {
+  if (whatsappPackage == null) {
     Toast.makeText(context, "WhatsApp not installed", Toast.LENGTH_SHORT).show()
     return
   }
   // Create intent
-  val intent = Intent().apply {
+  Intent().apply {
     action = Intent.ACTION_SEND
     putExtra(Intent.EXTRA_STREAM, uri)
-    type = when (t) {
-      StatusType.Image -> "image/*"
-      StatusType.Video -> "video/*"
-    }
+    type = mimeType
     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-    // Try regular WhatsApp first, then WhatsApp Business
-    when {
-      whatsappInstalled -> setPackage(whatsappPackage)
-      whatsappBusinessInstalled -> setPackage(whatsappBusinessPackage)
-    }
+    setPackage(whatsappPackage)
+    context.startActivity(this)
   }
-
-  context.startActivity(intent)
 }
 
-private fun shareStatus(context: Context, uri: Uri, t: StatusType) {
-
-  val shareIntent = Intent().apply {
-    action = Intent.ACTION_SEND
-    putExtra(Intent.EXTRA_STREAM, uri)
-    type = when (t) {
-      StatusType.Video -> "video/*"
-      StatusType.Image -> "image/*"
-    }
-    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-  }
-  context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+private fun shareStatus(context: Context, uri: Uri, mimeType: String) {
+  Intent.createChooser(
+    Intent().apply {
+      action = Intent.ACTION_SEND
+      putExtra(Intent.EXTRA_STREAM, uri)
+      type = mimeType
+      addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    },
+    "Share via"
+  ).also { context.startActivity(it) }
 }

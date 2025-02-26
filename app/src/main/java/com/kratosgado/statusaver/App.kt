@@ -15,10 +15,9 @@ import kotlinx.coroutines.launch
 @HiltAndroidApp
 class App : Application(), Application.ActivityLifecycleCallbacks {
   companion object {
-    private const val LOG_TAG = "MainApp"
+    private const val tag = "MainApp"
   }
 
-  private var currentActivity: Activity? = null
   val adManager by lazy { OpenAdManager(this) }
 
   override fun onCreate() {
@@ -28,7 +27,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     backgroundScope.launch {
       // Initialize the Google Mobile Ads SDK on a background thread.
       MobileAds.initialize(this@App) {
-        Log.d(LOG_TAG, "Mobile Ads initialized")
+        Log.d(tag, "Mobile Ads initialized")
       }
     }
   }

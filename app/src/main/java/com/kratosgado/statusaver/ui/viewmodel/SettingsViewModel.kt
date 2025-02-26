@@ -69,7 +69,6 @@ class SettingsViewModel @Inject constructor(
 
   fun ready() {
     _isLoading.value = false
-    _hasCheckedSettings.value = true
   }
 
   private fun checkPermissions() {
@@ -87,6 +86,7 @@ class SettingsViewModel @Inject constructor(
     _permissionState.value = _permissionState.value.copy(
       shouldShowPermissionDialog = !hasRequiredPermissions()
     )
+    _hasCheckedSettings.value = true
   }
 
   private fun hasRequiredPermissions(): Boolean {
@@ -136,14 +136,22 @@ class SettingsViewModel @Inject constructor(
   }
 
   fun getManageStorageIntent(): Intent {
-    return Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
-      data = Uri.parse("package:${context.packageName}")
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+        data = Uri.parse("package:${context.packageName}")
+      }
+    } else {
+      TODO("VERSION.SDK_INT < R")
     }
   }
 
   fun getNotificationSettingsIntent(): Intent {
-    return Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-      putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+      }
+    } else {
+      TODO("VERSION.SDK_INT < O")
     }
   }
 
