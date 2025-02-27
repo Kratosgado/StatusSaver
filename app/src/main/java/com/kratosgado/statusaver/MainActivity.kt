@@ -31,6 +31,7 @@ import com.kratosgado.statusaver.ui.views.StatusPager
 import com.kratosgado.statusaver.ui.views.restoreAccessToDirectory
 import com.kratosgado.statusaver.utils.repostStatus
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
           when {
             isLoading -> {
               LaunchedEffect(Unit) {
+                delay(1000)
                 viewModel.loadSettings()
                 Log.d(tag, "Settings loaded")
                 settingsModel.setLoading(false)
@@ -61,7 +63,6 @@ class MainActivity : ComponentActivity() {
             uiState.statusDirUri == null -> {
               PermissionScreen({ uri ->
                 settingsModel.setStatusLocation(uri)
-                viewModel.setStatusDir(uri)
                 settingsModel.setLoading(true)
               }, context = context)
             }
