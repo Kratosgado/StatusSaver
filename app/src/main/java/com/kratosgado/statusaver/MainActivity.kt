@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -35,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   private val adManager by lazy { (application as App).adManager }
   override fun onCreate(savedInstanceState: Bundle?) {
-//    requestConsent()
     super.onCreate(savedInstanceState)
     lifecycle.addObserver(adManager)
     setContent {
@@ -50,19 +50,19 @@ class MainActivity : ComponentActivity() {
           val context = LocalContext.current
           when {
             isLoading -> {
-              viewModel.loadSettings()
+              LaunchedEffect(Unit) {
+                viewModel.loadSettings()
+                Log.d(tag, "Settings loaded")
+                settingsModel.setLoading(false)
+              }
               LoadingScreen("Loading ...")
-            }
-
-            uiState.statusDirUri != null && uiState.statuses.isEmpty() -> {
-              LoadingScreen("Retrieving Stats")
             }
 
             uiState.statusDirUri == null -> {
               PermissionScreen({ uri ->
                 settingsModel.setStatusLocation(uri)
                 viewModel.setStatusDir(uri)
-                viewModel.loadStatuses()
+                settingsModel.setLoading(true)
               }, context = context)
             }
 

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,7 +37,6 @@ class SettingsViewModel @Inject constructor(
   val isLoading = _isLoading.asStateFlow()
 
   private val _hasCheckedSettings = MutableStateFlow(false)
-  val hasCheckedSettings = _hasCheckedSettings.asStateFlow()
   private val _permissionState = MutableStateFlow(PermissionState())
   val permissionState: StateFlow<PermissionState> = _permissionState
 
@@ -61,14 +61,14 @@ class SettingsViewModel @Inject constructor(
       )
     }.onEach {
       _settingsState.value = it
-      _isLoading.value = false
     }.launchIn(viewModelScope)
 
     checkPermissions()
   }
 
-  fun ready() {
-    _isLoading.value = false
+  fun setLoading(value: Boolean) {
+    _isLoading.value = value
+    Log.d("SettingsViewModel", "loading set to false")
   }
 
   private fun checkPermissions() {

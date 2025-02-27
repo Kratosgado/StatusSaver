@@ -1,6 +1,7 @@
 package com.kratosgado.statusaver.ui.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.kratosgado.statusaver.domain.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,37 +24,32 @@ class AppViewModel @Inject constructor(
   private val _uiState = MutableStateFlow(AppUiState())
   val uiState = _uiState.asStateFlow()
 
-  fun loadSettings() {
-    viewModelScope.launch {
-      settingsManager.statusLocation.collect {
-        it?.let {
-          settingsManager.saveLocation.collect { saveUri ->
-            _uiState.value =
-              _uiState.value.copy(statusDirUri = it, savedDirUri = saveUri!!.toFile())
-            loadStatuses()
-          }
-        }
-      }
-    }
+  suspend fun loadSettings() {
+    val stat = settingsManager.statusLocation.first()
+    val saved = settingsManager.saveLocation.first()
+    _uiState.value =
+      _uiState.value.copy(statusDirUri = stat, savedDirUri = saved!!.toFile())
+    if (stat != null) loadStatuses()
+    Log.d(tag, "initialize settings")
   }
 
-  fun loadStatuses() {
-    viewModelScope.launch {
-      try {
-        val (statuses, saved) = repository.loadStatuses(
-          _uiState.value.statusDirUri!!,
-          _uiState.value.savedDirUri!!
-        )
+  suspend fun loadStatuses() {
+    try {
+      repository.loadStatuses(
+        _uiState.value.statusDirUri!!,
+        _uiState.value.savedDirUri!!
+      ).let { (statuses, saved) ->
         _uiState.value = _uiState.value.copy(
           statuses = statuses,
           saved = saved,
           error = null
         )
-      } catch (e: Exception) {
-        _uiState.value = _uiState.value.copy(
-          error = "Failed to load statuses: ${e.message}",
-        )
       }
+      Log.d(tag, "Status loaded")
+    } catch (e: Exception) {
+      _uiState.value = _uiState.value.copy(
+        error = "Failed to load statuses: ${e.message}",
+      )
     }
   }
 
@@ -93,5 +90,9 @@ class AppViewModel @Inject constructor(
 
   fun clearError() {
     _uiState.value = _uiState.value.copy(error = null)
+  }
+
+  companion object {
+    const val tag = "AppMiewModel"
   }
 }

@@ -50,8 +50,11 @@ class SettingsManager @Inject constructor(@ApplicationContext private val contex
     ).apply { if (!exists()) mkdir() }.toURI().toString()
   }
 
-  suspend fun isInitialized(): Boolean {
-    return dataStore.data.first().contains(STATUS_LOCATION)
+  suspend fun initialize(): Uri? {
+    return dataStore.data
+      .map { preferences ->
+        preferences[SAVE_LOCATION]?.let { Uri.parse(it) } ?: Uri.parse(DEFAULT_SAVE_LOCATION)
+      }.first()
   }
 
   // Save Location (URI)
