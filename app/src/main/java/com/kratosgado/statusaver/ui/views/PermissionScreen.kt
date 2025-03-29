@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.documentfile.provider.DocumentFile
+import java.io.File
 
 @Composable
 fun PermissionScreen(
@@ -33,12 +36,26 @@ fun PermissionScreen(
       onDirectorySelected(it)
     }
   }
+  val whatsappFolder = File(
+    Environment.getExternalStorageDirectory(),
+    "Android/media/com.whatsapp/WhatsApp/Media/.Statuses"
+  )
+  val whatsappBusinessFolder = File(
+    Environment.getExternalStorageDirectory(),
+    "Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses"
+  )
+  val whatsappUri: Uri? = when {
+    whatsappFolder.exists() -> DocumentFile.fromFile(whatsappFolder).uri
+    whatsappBusinessFolder.exists() -> DocumentFile.fromFile(whatsappBusinessFolder).uri
+    else -> null
+  }
+
   Column(
     modifier = Modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
-    Button(onClick = { launcher.launch(null) }) {
+    Button(onClick = { launcher.launch(whatsappUri) }) {
       Text(text = "Select Status Folder")
     }
   }
