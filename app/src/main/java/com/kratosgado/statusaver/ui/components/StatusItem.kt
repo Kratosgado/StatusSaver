@@ -2,7 +2,6 @@ package com.kratosgado.statusaver.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -34,27 +33,26 @@ fun StatusItem(
   onSaveClick: () -> Unit,
 ) {
   Box(modifier = Modifier.aspectRatio(0.75f)) {
+    val model = ImageRequest.Builder(LocalContext.current).data(status.uri).size(200, 200)
     when (status.type) {
       StatusType.Image ->
         Card(modifier) {
           AsyncImage(
-            model = status.uri,
+            model = model.build(),
             contentDescription = "Status Image",
             contentScale = contentScale,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.size(200.dp)
           )
         }
 
       StatusType.Video -> {
-        val model = ImageRequest.Builder(LocalContext.current).data(status.uri)
-          .videoFrameMillis(10000)
-          .decoderFactory { res, opt, _ -> VideoFrameDecoder(res.source, opt) }.build()
         Card(modifier) {
           AsyncImage(
-            model = model,
+            model = model.videoFrameMillis(1000)
+              .decoderFactory { res, opt, _ -> VideoFrameDecoder(res.source, opt) }.build(),
             contentScale = contentScale,
             contentDescription = "Video thumbnail",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.size(200.dp)
           )
         }
         Icon(
