@@ -14,8 +14,8 @@ android {
     applicationId = "com.kratosgado.statusaver"
     minSdk = 24
     targetSdk = 35
-    versionCode = 5
-    versionName = "1.1-latest"
+    versionCode = 6
+    versionName = "1.2-latest"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables {
@@ -28,6 +28,10 @@ android {
       isMinifyEnabled = true
       isShrinkResources = true // Enable resource shrinking
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+    debug {
+      applicationIdSuffix = ".debug"
+      versionNameSuffix = "-debug"
     }
   }
   compileOptions {
