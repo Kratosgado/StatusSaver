@@ -8,6 +8,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -50,10 +51,10 @@ class SettingsManager @Inject constructor(@ApplicationContext private val contex
     ).apply { if (!exists()) mkdir() }.toURI().toString()
   }
 
-  suspend fun initialize(): Uri? {
+  suspend fun initialize(): Uri {
     return dataStore.data
       .map { preferences ->
-        preferences[SAVE_LOCATION]?.let { Uri.parse(it) } ?: Uri.parse(DEFAULT_SAVE_LOCATION)
+        preferences[SAVE_LOCATION]?.toUri() ?: DEFAULT_SAVE_LOCATION.toUri()
       }.first()
   }
 
@@ -84,11 +85,11 @@ class SettingsManager @Inject constructor(@ApplicationContext private val contex
 
   val saveLocation: Flow<Uri?> = dataStore.data
     .map { preferences ->
-      preferences[SAVE_LOCATION]?.let { Uri.parse(it) } ?: Uri.parse(DEFAULT_SAVE_LOCATION)
+      preferences[SAVE_LOCATION]?.toUri() ?: DEFAULT_SAVE_LOCATION.toUri()
     }
 
   val statusLocation: Flow<Uri?> = dataStore.data.map { pref ->
-    pref[STATUS_LOCATION]?.let { Uri.parse(it) }
+    pref[STATUS_LOCATION]?.toUri()
   }
 
   // Auto Save
