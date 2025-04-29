@@ -1,8 +1,12 @@
 package com.kratosgado.statusaver.data
 
+import android.content.ContentUris
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
 import com.kratosgado.statusaver.domain.Status
 import com.kratosgado.statusaver.domain.StatusType
@@ -52,6 +56,71 @@ class StatusRepository(private val context: Context) {
       }
       return@withContext Pair(statuses, saved)
     }
+
+  fun loadImages(): List<Status> {
+    val imageUris = mutableListOf<Status>()
+    val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATE_ADDED)
+    val videoProjection = arrayOf(
+      MediaStore.Video.Media._ID,
+      MediaStore.Video.Media.DATE_ADDED
+    )
+    val isVersionAbove10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    val selection = if (isVersionAbove10) {
+      "${MediaStore.Images.Media.RELATIVE_PATH} LIKE ?"
+    } else {
+      "${MediaStore.Images.Media.DATA} LIKE ?"
+    }
+    val videoSelection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      "${MediaStore.Video.Media.RELATIVE_PATH} LIKE ?"
+    } else {
+      "${MediaStore.Video.Media.DATA} LIKE ?"
+    }
+    val statusPath = if (isVersionAbove10) {
+      "WhatsApp/Media/.Statuses"
+    } else {
+      val externalStorage = Environment.getExternalStorageDirectory().path
+      "$externalStorage/WhatsApp/Media/.Statuses"
+    }
+    val selectionArgs = arrayOf("$statusPath%")
+    val cursor = context.contentResolver.query(
+      MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+      projection, selection, selectionArgs, null
+    )
+    val videoCursor =
+      context.contentResolver.query(
+        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+        videoProjection,
+        videoSelection,
+        selectionArgs,
+        null
+      )
+    cursor?.use {
+      while (it.moveToNext()) {
+        val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+        val dateAdded = it.getLong(it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED))
+        val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+        imageUris.add(
+          Status(
+            uri = uri,
+            name = "$id",
+            isSaved = false,
+            type = StatusType.Image,
+            date = dateAdded
+          )
+        )
+      }
+    }
+// Query Videos
+    videoCursor?.use {
+      while (it.moveToNext()) {
+        val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+        val dateAdded = it.getLong(it.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
+        val uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
+        imageUris.add(Status(uri, "$id", false, StatusType.Video, dateAdded))
+      }
+    }
+    return imageUris.sortedByDescending { it.date }
+  }
 
   suspend fun saveStatus(uri: Uri, savedDir: File): Boolean = withContext(Dispatchers.IO) {
     try {
